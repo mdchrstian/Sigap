@@ -138,6 +138,7 @@ REST_FRAMEWORK = {
         "register": "5/hour",
         "login": "10/min",
         "geocode": "30/min",
+        "ai_analyze": "10/hour",
         "comments": "20/hour",
     },
 }
