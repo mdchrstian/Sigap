@@ -134,4 +134,10 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
+    "DEFAULT_THROTTLE_RATES": {"geocode": "30/min"},
 }
+
+NOMINATIM_URL = env("NOMINATIM_URL", default="https://nominatim.openstreetmap.org")
+NOMINATIM_USER_AGENT = env(
+    "NOMINATIM_USER_AGENT", default="Sigap/0.1 (Bali DigiFest 2026 demo)"
+)
