@@ -134,7 +134,19 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 20,
-    "DEFAULT_THROTTLE_RATES": {"geocode": "30/min"},
+    "DEFAULT_THROTTLE_RATES": {
+        "register": "5/hour",
+        "login": "10/min",
+        "geocode": "30/min",
+    },
+}
+
+from datetime import timedelta  # noqa: E402
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=7),
+    "USER_ID_FIELD": "id",
 }
 
 NOMINATIM_URL = env("NOMINATIM_URL", default="https://nominatim.openstreetmap.org")
