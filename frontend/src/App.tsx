@@ -12,6 +12,7 @@ import NotificationsPage from "./pages/NotificationsPage";
 import ProfilePage from "./pages/ProfilePage";
 import OfficerDashboardPage from "./pages/OfficerDashboardPage";
 import OfficerReportPage from "./pages/OfficerReportPage";
+import OfficerStatsPage from "./pages/OfficerStatsPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import RequireAuth from "./features/auth/RequireAuth";
 import RequireRole from "./features/auth/RequireRole";
@@ -38,6 +39,7 @@ export default function App() {
         <Route path="/profil" element={auth(<ProfilePage />)} />
         <Route path="/petugas" element={staff(<OfficerDashboardPage />)} />
         <Route path="/petugas/laporan/:id" element={staff(<OfficerReportPage />)} />
+        <Route path="/petugas/statistik" element={staff(<OfficerStatsPage />)} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
