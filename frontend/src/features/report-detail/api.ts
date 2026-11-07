@@ -16,7 +16,7 @@ export interface DetailReport {
   master: { id: number; report_count: number } | null;
   ai: {
     used: boolean;
-    suggested_category?: string | null;
+    suggested_category?: { id: number; slug: string; name: string } | string | null;
     suggested_description?: string | null;
     observations?: string[] | string | null;
   };
