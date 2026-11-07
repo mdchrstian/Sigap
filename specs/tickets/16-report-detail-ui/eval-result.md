@@ -1,7 +1,6 @@
 # Eval result 16
-Tester agent hit its turn limit twice (no output). Unit checks self-verified (vitest + tsc pass).
-Checks 5-9 are interactive browser checks (login, add/delete comment, 375px layout). This machine has no
-Playwright/Chrome (only Brave/Safari without a driver), so they could not be automated or observed.
+Tester agent hit its turn limit; checks run by hand. Unit via vitest + tsc, UI via agent-browser
+against Vite (5173) and Django (8000, Supabase cloud DB, seeded report SGP-000001 and user).
 
 | # | Result |
 |---|--------|
@@ -9,4 +8,10 @@ Playwright/Chrome (only Brave/Safari without a driver), so they could not be aut
 | 2 | PASS (unit) |
 | 3 | PASS (unit) |
 | 4 | PASS (unit) |
-| 5-9 | NOT RUN (needs a human or Playwright; steps are in eval.md) |
+| 5 | PASS (photo, status badge, map marker, timeline visible) |
+| 6 | PASS (comment with photo appears labelled "Pelapor") |
+| 7 | PASS (Hapus removes it; list shows "Belum ada komentar.") |
+| 8 | PASS (/laporan-saya lists report, click opens /laporan/1) |
+| 9 | PASS (375px viewport screenshot is single column; no horizontal scrollbar seen) |
+
+Minor note: after sending a comment the selected photo filename stays in the form.
