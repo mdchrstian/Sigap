@@ -155,3 +155,10 @@ NOMINATIM_URL = env("NOMINATIM_URL", default="https://nominatim.openstreetmap.or
 NOMINATIM_USER_AGENT = env(
     "NOMINATIM_USER_AGENT", default="Sigap/0.1 (Bali DigiFest 2026 demo)"
 )
+
+DUP_RADIUS_M = env.int("DUP_RADIUS_M", default=100)
+DUP_WINDOW_DAYS = env.int("DUP_WINDOW_DAYS", default=90)
+DUP_HIGH_SIM = env.float("DUP_HIGH_SIM", default=0.88)
+DUP_HIGH_MAX_DIST_M = env.int("DUP_HIGH_MAX_DIST_M", default=50)
+DUP_MEDIUM_SIM = env.float("DUP_MEDIUM_SIM", default=0.75)
+DUP_MAX_CANDIDATES = env.int("DUP_MAX_CANDIDATES", default=5)
