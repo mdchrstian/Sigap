@@ -29,7 +29,7 @@ describe("analytics", () => {
     fireEvent.click(screen.getByRole("button", { name: "Buat Ringkasan" }));
     const box = await screen.findByTestId("insights-result");
     expect(box.getAttribute("data-verified")).toBe("false");
-    expect(box.className).toContain("amber");
+    expect(box.className).toContain("marka-soft");
     expect(screen.getByText(/Periksa kembali sebelum digunakan/)).toBeInTheDocument();
   });
 
