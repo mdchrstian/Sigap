@@ -98,4 +98,18 @@ def serialize_detail(r, request):
     if authed and u.role in ("officer", "admin"):
         rep = r.reporter
         out["reporter"] = {"id": rep.id, "full_name": rep.full_name, "email": rep.email}
+    staff = bool(authed and u.role in ("officer", "admin"))
+    roles = {"officer": "Petugas", "admin": "Administrator"}
+    hist = []
+    for h in r.history.all():
+        by = h.changed_by
+        item = {"to_status": h.to_status,
+                "status_label": Report.Status(h.to_status).label,
+                "note": h.note,
+                "actor_role_label": roles.get(by.role, "Pelapor") if by else "Pelapor",
+                "created_at": h.created_at}
+        if staff:
+            item["actor_name"] = by.full_name if by else None
+        hist.append(item)
+    out["history"] = hist
     return out

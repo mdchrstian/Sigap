@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from tracking.models import ReportStatusHistory
+
 from .models import Category, Report, ReportImage
 
 
@@ -14,11 +16,21 @@ class ReportImageInline(admin.TabularInline):
     extra = 0
 
 
+class HistoryInline(admin.TabularInline):
+    model = ReportStatusHistory
+    extra = 0
+    can_delete = False
+    readonly_fields = ("from_status", "to_status", "note", "changed_by", "created_at")
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+
 @admin.register(Report)
 class ReportAdmin(admin.ModelAdmin):
     list_display = ("code", "category", "status", "regency", "is_hidden", "created_at")
     list_filter = ("status", "category", "regency", "is_hidden")
-    inlines = [ReportImageInline]
+    inlines = [ReportImageInline, HistoryInline]
     actions = ["hide", "unhide"]
 
     @admin.action(description="Sembunyikan")
