@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import NotificationBell from "../../features/notifications/NotificationBell";
 import { useAuth } from "../../features/auth/AuthContext";
 
 const links = [
@@ -38,6 +39,7 @@ export default function TopNav() {
           ))}
         </nav>
         <div className="flex items-center gap-2">
+          {user && <NotificationBell />}
           {user ? (
             <div className="relative hidden md:block">
               <button className={plain} aria-expanded={menu} onClick={() => setMenu((m) => !m)}>
