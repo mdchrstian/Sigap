@@ -43,12 +43,12 @@ export default function RegisterPage() {
             <Input id="email" type="email" required value={form.email} onChange={set("email")} />
           </Field>
           <Field label="Kata sandi" htmlFor="password" error={err.fields.password}>
-            <div className="flex gap-2">
+            <div className="relative">
               <Input
                 id="password"
                 type={show ? "text" : "password"}
                 required
-                className="min-w-0 flex-1"
+                className="w-full pr-14"
                 value={form.password}
                 onChange={set("password")}
               />
@@ -57,7 +57,7 @@ export default function RegisterPage() {
                 icon={show ? EyeOff : Eye}
                 aria-label={show ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                 onClick={() => setShow(!show)}
-                className="px-3"
+                className="absolute right-0 top-0 h-12 px-3"
               />
             </div>
           </Field>
