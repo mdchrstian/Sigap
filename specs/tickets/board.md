@@ -26,7 +26,7 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 | 19 | 19-analytics-ui | done | solo | after:13,17 (insights API, officer pages) | yes | - |
 | 20 | 20-demo-seed-readme | done | solo | after:08,09,11 (services to seed with) | no | - |
 | 21 | 21-nusarouter-ai-provider | draft | solo | after:07,13 (analyze_photo, generate_json) | no | - |
-| 22 | 22-design-foundation | ready | solo | alongside | yes | - |
+| 22 | 22-design-foundation | done | solo | alongside | yes | - |
 | 23 | 23-landing-page | draft | solo | after:22 (tokens, components/ui, Layout) | yes | - |
 | 24 | 24-report-flow-auth-ui | draft | solo | after:22 (components/ui) | yes | - |
 | 25 | 25-citizen-pages-ui | draft | solo | after:22 (components/ui, MarkaRoute) | yes | - |
