@@ -49,10 +49,10 @@ export default function ProfilePage() {
           <Button type="submit" size="lg" loading={pending} className="w-full">Simpan</Button>
         </form>
         <Button
-          variant="secondary"
+          variant="danger"
           icon={LogOut}
           onClick={() => { logout(); nav("/masuk"); }}
-          className="w-full border-danger text-danger"
+          className="w-full"
         >
           Keluar
         </Button>
