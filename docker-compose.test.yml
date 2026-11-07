@@ -1,0 +1,14 @@
+services:
+  db:
+    build: ./docker/db
+    environment:
+      POSTGRES_USER: sigap
+      POSTGRES_PASSWORD: sigap
+      POSTGRES_DB: sigap
+    ports:
+      - "54329:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sigap -d sigap"]
+      interval: 3s
+      timeout: 3s
+      retries: 20

@@ -1,2 +1,8 @@
 .DS_Store
 super-agent/
+.env
+.venv/
+backend/media/
+__pycache__/
+node_modules/
+dist/
