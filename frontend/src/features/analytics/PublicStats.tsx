@@ -1,34 +1,35 @@
 import { useQuery } from "@tanstack/react-query";
-import { CategoryBar } from "./Charts";
 import { fetchSummary, LIMITED_TEXT, type Summary } from "./analyticsApi";
+import RegencySigns from "../landing/RegencySigns";
 
 export function PublicStatsView({ data }: { data: Summary }) {
   const done = data.by_status.find((s) => s.status === "completed")?.count ?? 0;
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-6">
       {data.limited_data && (
-        <p role="status" className="rounded border border-amber-400 bg-amber-50 p-2 text-sm text-amber-900">
+        <p role="status" className="rounded-lg bg-marka-soft p-4 text-sm text-ink">
           {LIMITED_TEXT}
         </p>
       )}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="rounded border bg-white p-3">
-          <div className="text-2xl font-bold" data-testid="stat-total">{data.total}</div>
-          <div className="text-sm text-slate-600">Total laporan</div>
-        </div>
-        <div className="rounded border bg-white p-3">
-          <div className="text-2xl font-bold" data-testid="stat-done">{done}</div>
-          <div className="text-sm text-slate-600">Laporan selesai</div>
-        </div>
-      </div>
-      <CategoryBar data={data.by_category} />
+      {data.total === 0 && data.by_regency.length === 0 ? (
+        <p className="text-base text-ink">Belum ada laporan.</p>
+      ) : (
+        <p className="text-base text-ink">
+          Sejauh ini{" "}
+          <span className="font-mono font-semibold tabular-nums" data-testid="stat-total">{data.total}</span>{" "}
+          laporan masuk,{" "}
+          <span className="font-mono font-semibold tabular-nums" data-testid="stat-done">{done}</span>{" "}
+          sudah selesai.
+        </p>
+      )}
+      {data.by_regency.length > 0 && <RegencySigns items={data.by_regency} />}
     </div>
   );
 }
 
 export default function PublicStats() {
   const q = useQuery({ queryKey: ["public-summary"], queryFn: () => fetchSummary() });
-  if (q.isLoading) return <p>Memuat statistik...</p>;
-  if (q.isError || !q.data) return <p role="alert" className="text-red-600">Gagal memuat statistik.</p>;
+  if (q.isLoading) return <p className="text-base text-muted">Memuat statistik...</p>;
+  if (q.isError || !q.data) return <p role="alert" className="text-base text-danger">Gagal memuat statistik.</p>;
   return <PublicStatsView data={q.data} />;
 }
