@@ -17,7 +17,7 @@ export interface ApiOptions {
   form?: FormData;
 }
 
-const BASE = (import.meta.env.VITE_API_URL as string | undefined) ?? "";
+const BASE = ((import.meta.env.VITE_API_URL as string | undefined) ?? "").replace(/\/+$/, "");
 
 async function parse(res: Response): Promise<unknown> {
   const text = await res.text();
