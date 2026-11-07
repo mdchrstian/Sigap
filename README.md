@@ -58,7 +58,7 @@ Salin `backend/.env.example` ke `backend/.env`.
 | `SUPABASE_S3_ACCESS_KEY` | `dummy-access-key` | Access key S3 |
 | `SUPABASE_S3_SECRET_KEY` | `dummy-secret-key` | Secret key S3 |
 | `SUPABASE_BUCKET` | `sigap` | Nama bucket publik |
-| `AI_PROVIDER` | `fake` | `fake` atau `openai` |
+| `AI_PROVIDER` | `fake` | `fake`, `openai`, atau `nusarouter` |
 | `OPENAI_API_KEY` | (kosong) | Kunci OpenAI, wajib bila `AI_PROVIDER=openai` |
 | `OPENAI_VISION_MODEL` | `gpt-4o-mini` | Model analisis gambar |
 | `OPENAI_TEXT_MODEL` | `gpt-4o-mini` | Model teks |
@@ -66,6 +66,12 @@ Salin `backend/.env.example` ke `backend/.env`.
 | `NOMINATIM_URL` | `https://nominatim.openstreetmap.org` | Reverse geocoding |
 | `NOMINATIM_USER_AGENT` | `Sigap/0.1 (...)` | User agent Nominatim |
 | `DEMO_PASSWORD` | `SigapDemo2026!` | Password akun demo untuk `seed_demo` |
+
+### Mengaktifkan NusaRouter
+1. Di `backend/.env` set `AI_PROVIDER=nusarouter`.
+2. Isi `NUSAROUTER_API_KEY`, `NUSAROUTER_BASE_URL`, `NUSAROUTER_VISION_MODEL` dari dashboard NusaRouter.
+3. Opsional: `NUSAROUTER_TEXT_MODEL` (kosong = model vision) dan `NUSAROUTER_TIMEOUT` (detik).
+4. Embedding tetap memakai vektor lokal (tanpa panggilan jaringan).
 
 ## Setup .env + migrasi (Supabase)
 
