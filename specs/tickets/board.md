@@ -22,6 +22,6 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 | 15 | 15-explore-map | done | solo | after:04,05 (layout, reports) | yes | - |
 | 16 | 16-report-detail-ui | running | solo | after:04,09,11 (history, comments API) | yes | 1794033390 |
 | 17 | 17-officer-dashboard-ui | running | solo | after:04,09,12 (officer API, summary) | yes | 1794033390 |
-| 18 | 18-notifications-ui | ready | solo | after:04,10 (TopNav, notifications API) | yes | - |
+| 18 | 18-notifications-ui | running | solo | after:04,10 (TopNav, notifications API) | yes | 1794033480 |
 | 19 | 19-analytics-ui | draft | solo | after:13,17 (insights API, officer pages) | yes | - |
 | 20 | 20-demo-seed-readme | ready | solo | after:08,09,11 (services to seed with) | no | - |
