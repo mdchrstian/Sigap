@@ -8,14 +8,14 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 | 01 | 01-backend-foundation | done | solo | alongside | no | - |
 | 02 | 02-frontend-foundation | done | solo | alongside | yes | - |
 | 03 | 03-auth-api | done | solo | after:01 (User model, settings) | no | - |
-| 04 | 04-auth-ui | ready | solo | after:02,03 (api client, auth endpoints) | yes | - |
-| 05 | 05-reports-core-api | ready | solo | after:03,06 (permissions, is_in_bali) | no | - |
+| 04 | 04-auth-ui | running | solo | after:02,03 (api client, auth endpoints) | yes | 1794032475 |
+| 05 | 05-reports-core-api | done | solo | after:03,06 (permissions, is_in_bali) | no | - |
 | 06 | 06-locations-api | done | solo | after:01 (project skeleton) | no | - |
-| 07 | 07-ai-report-assistant-api | draft | solo | after:05 (Category model) | no | - |
+| 07 | 07-ai-report-assistant-api | ready | solo | after:05 (Category model) | no | - |
 | 08 | 08-duplicate-detection-api | draft | solo | after:05,07 (geo.nearby, embed_text) | no | - |
 | 09 | 09-status-tracking-api | draft | solo | after:05,08 (both edit reports/serializers.py) | no | - |
 | 10 | 10-notifications-api | draft | solo | after:09 (status history signal) | no | - |
-| 11 | 11-comments-api | draft | solo | after:05 (Report, images helper) | no | - |
+| 11 | 11-comments-api | ready | solo | after:05 (Report, images helper) | no | - |
 | 12 | 12-analytics-api | draft | solo | after:09 (IsOfficer, statuses) | no | - |
 | 13 | 13-ai-intelligence-api | draft | solo | after:07,12 (generate_json, compute_summary) | no | - |
 | 14 | 14-create-report-ui | draft | solo | after:04,06,07,08 (auth, geocode, AI, duplicates) | yes | - |
