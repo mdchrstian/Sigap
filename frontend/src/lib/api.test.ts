@@ -42,3 +42,15 @@ describe("api", () => {
     expect(getTokens()).toBeNull();
   });
 });
+
+describe("api base url", () => {
+  it("strips trailing slash from VITE_API_URL", async () => {
+    vi.stubEnv("VITE_API_URL", "https://x.onrender.com/");
+    vi.resetModules();
+    const { api: fresh } = await import("./api");
+    const f = vi.spyOn(globalThis, "fetch").mockResolvedValue(json(200, {}));
+    await fresh("/api/health");
+    expect(f.mock.calls[0][0]).toBe("https://x.onrender.com/api/health");
+    vi.unstubAllEnvs();
+  });
+});

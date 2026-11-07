@@ -73,6 +73,23 @@ Salin `backend/.env.example` ke `backend/.env`.
 3. Opsional: `NUSAROUTER_TEXT_MODEL` (kosong = model vision) dan `NUSAROUTER_TIMEOUT` (detik).
 4. Embedding tetap memakai vektor lokal (tanpa panggilan jaringan).
 
+## Setup .env + migrasi (Supabase)
+
+```bash
+backend/scripts/setup_env.sh --database-url 'postgres://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require' --seed
+```
+
+Skrip membuat `backend/.env` dari `.env.example` (dengan `SECRET_KEY` baru), mengisi `DATABASE_URL`, lalu menjalankan `migrate`. Gunakan Session pooler (port 5432) atau koneksi langsung, bukan Transaction pooler (6543).
+
+| Flag | Fungsi |
+|------|--------|
+| `--database-url URL` | Set/ganti `DATABASE_URL` di `.env` |
+| `--seed` | Jalankan `seed_demo` setelah migrasi |
+| `--skip-migrate` | Lewati migrasi |
+| `--force` | Buat ulang `.env` dari `.env.example` |
+
+`.env` yang sudah ada tidak diubah tanpa `--force`.
+
 ## Perintah
 
 ```bash
