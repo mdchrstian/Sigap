@@ -5,12 +5,12 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 
 | ID | Ticket | Status | Mode | Runs | UI | Started |
 |----|--------|--------|------|------|----|---------|
-| 01 | 01-backend-foundation | ready | solo | alongside | no | - |
-| 02 | 02-frontend-foundation | ready | solo | alongside | yes | - |
-| 03 | 03-auth-api | draft | solo | after:01 (User model, settings) | no | - |
+| 01 | 01-backend-foundation | done | solo | alongside | no | - |
+| 02 | 02-frontend-foundation | done | solo | alongside | yes | - |
+| 03 | 03-auth-api | ready | solo | after:01 (User model, settings) | no | - |
 | 04 | 04-auth-ui | draft | solo | after:02,03 (api client, auth endpoints) | yes | - |
 | 05 | 05-reports-core-api | draft | solo | after:03,06 (permissions, is_in_bali) | no | - |
-| 06 | 06-locations-api | draft | solo | after:01 (project skeleton) | no | - |
+| 06 | 06-locations-api | ready | solo | after:01 (project skeleton) | no | - |
 | 07 | 07-ai-report-assistant-api | draft | solo | after:05 (Category model) | no | - |
 | 08 | 08-duplicate-detection-api | draft | solo | after:05,07 (geo.nearby, embed_text) | no | - |
 | 09 | 09-status-tracking-api | draft | solo | after:05,08 (both edit reports/serializers.py) | no | - |
