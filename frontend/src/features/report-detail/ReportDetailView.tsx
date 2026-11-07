@@ -6,6 +6,9 @@ import { ApiError } from "../../lib/api";
 import Comments from "./Comments";
 import { fetchDetail, fmtDate, fmtDateTime, type DetailReport } from "./api";
 
+const catName = (c: unknown): string =>
+  typeof c === "string" ? c : c && typeof c === "object" ? String((c as { name?: string }).name ?? "") : "";
+
 export default function ReportDetailView({ id }: { id: string }) {
   const [r, setR] = useState<DetailReport | null>(null);
   const [err, setErr] = useState("");
@@ -99,10 +102,10 @@ export default function ReportDetailView({ id }: { id: string }) {
       {r.ai.used && (
         <aside className="rounded border border-violet-300 bg-violet-50 p-3 text-sm">
           <h2 className="font-semibold">Dibantu AI</h2>
-          {r.ai.suggested_category && <p>Kategori: {r.ai.suggested_category}</p>}
+          {catName(r.ai.suggested_category) && <p>Kategori: {catName(r.ai.suggested_category)}</p>}
           {r.ai.suggested_description && <p>Deskripsi: {r.ai.suggested_description}</p>}
           {obs.length > 0 && (
-            <ul className="list-disc pl-5">{obs.map((o, i) => <li key={i}>{o}</li>)}</ul>
+            <ul className="list-disc pl-5">{obs.map((o, i) => <li key={i}>{typeof o === "string" ? o : JSON.stringify(o)}</li>)}</ul>
           )}
           <p className="mt-1 text-slate-600">Saran AI telah ditinjau pelapor.</p>
         </aside>
