@@ -13,7 +13,10 @@ vi.mock("react-leaflet", () => ({
   TileLayer: () => null,
   CircleMarker: () => null,
   Popup: () => null,
-  useMap: () => ({}),
+  useMap: () => ({
+    getCenter: () => ({ lat: -8.4, lng: 115.1 }),
+    getBounds: () => ({ getEast: () => 116, getWest: () => 115, getNorth: () => -8, getSouth: () => -9 }),
+  }),
   useMapEvents: () => null,
 }));
 
