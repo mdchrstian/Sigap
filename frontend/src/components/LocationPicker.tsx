@@ -9,7 +9,7 @@ const TILE = (import.meta.env.VITE_TILE_URL as string | undefined)
 const BALI: [number, number] = [-8.4095, 115.1889];
 const PIN = divIcon({
   className: "",
-  html: '<div style="width:20px;height:20px;border-radius:50%;background:#2D6CDF;border:3px solid #fff;box-shadow:0 1px 4px #0006"></div>',
+  html: '<div style="width:20px;height:20px;border-radius:50%;background:var(--color-info);border:3px solid white;box-shadow:0 1px 4px #0006"></div>',
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 });
