@@ -41,12 +41,12 @@ export default function LoginPage() {
             <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
           </Field>
           <Field label="Kata sandi" htmlFor="password" error={err.fields.password}>
-            <div className="flex gap-2">
+            <div className="relative">
               <Input
                 id="password"
                 type={show ? "text" : "password"}
                 required
-                className="min-w-0 flex-1"
+                className="w-full pr-14"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
@@ -55,7 +55,7 @@ export default function LoginPage() {
                 icon={show ? EyeOff : Eye}
                 aria-label={show ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
                 onClick={() => setShow(!show)}
-                className="px-3"
+                className="absolute right-0 top-0 h-12 px-3"
               />
             </div>
           </Field>
