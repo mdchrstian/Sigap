@@ -121,7 +121,7 @@ export default function OfficerDashboardPage() {
       {items.length > 0 && (
         <>
           <table className="hidden w-full text-left text-sm md:table">
-            <thead className="sticky top-0 bg-ground">
+            <thead className="sticky top-[65px] z-10 bg-ground">
               <tr className="border-b border-line-strong">
                 <th className="px-3 py-3">Kode</th><th className="px-3 py-3">Kategori</th>
                 <th className="px-3 py-3">Kab/Kota</th><th className="px-3 py-3">Status</th>
