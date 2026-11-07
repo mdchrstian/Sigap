@@ -1,0 +1,19 @@
+{
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "claude-sonnet-5-5",
+    "CLAUDE_CODE_MAX_SUBAGENT_SPAWN_DEPTH": "2",
+    "CLAUDE_CODE_MAX_CONCURRENT_SUBAGENTS": "6"
+  },
+  "permissions": {
+    "allow": [
+      "Bash(.claude/scripts/board.sh *)",
+      "Bash(.claude/scripts/watchdog.sh *)",
+      "Bash(.claude/scripts/merge.sh *)"
+    ],
+    "deny": [
+      "Agent(general-purpose)",
+      "Agent(Plan)",
+      "Bash(git push *)"
+    ]
+  }
+}

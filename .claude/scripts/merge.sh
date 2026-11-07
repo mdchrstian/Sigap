@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Zero-token merger. Replaces the LLM merger agent.
+#   merge.sh <branch> [worktree]
+# exit 0 merged, exit 2 conflict (files printed), exit 1 other error.
+set -uo pipefail
+br=${1:?branch required}; wt=${2:-}
+
+git rev-parse --verify -q "$br" >/dev/null || { echo "branch not found: $br"; exit 1; }
+
+# board.md is edited live by the router; park it so the merge sees a clean tree.
+stashed=0
+if ! git diff --quiet; then git stash push -q -m "router-board" && stashed=1; fi
+restore() { (( stashed )) && git stash pop -q; }
+
+if git merge --no-ff -q "$br" -m "merge: $br" >/dev/null 2>&1; then
+  restore
+  if [[ -n $wt && -d $wt ]]; then git worktree remove --force "$wt" 2>/dev/null; fi
+  git branch -d "$br" -q 2>/dev/null
+  echo "merged $br ($(git rev-parse --short HEAD))"
+  exit 0
+fi
+
+files=$(git diff --name-only --diff-filter=U | tr '\n' ' ')
+git merge --abort 2>/dev/null
+restore
+echo "CONFLICT $br: $files"
+exit 2
