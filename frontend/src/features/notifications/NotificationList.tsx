@@ -1,4 +1,6 @@
 import { useNavigate } from "react-router-dom";
+import { BellOff } from "lucide-react";
+import { Button, EmptyState } from "../../components/ui";
 import { markRead, relativeTime, type NotificationItem } from "./notificationsApi";
 
 export default function NotificationList({
@@ -9,7 +11,7 @@ export default function NotificationList({
   onChanged: () => void;
 }) {
   const navigate = useNavigate();
-  if (items.length === 0) return <p className="text-slate-500">Belum ada notifikasi.</p>;
+  if (items.length === 0) return <EmptyState icon={BellOff} title="Belum ada notifikasi." />;
 
   const open = async (n: NotificationItem) => {
     if (!n.is_read) await markRead(n.id);
@@ -21,30 +23,34 @@ export default function NotificationList({
     onChanged();
   };
 
+  const weight = (n: NotificationItem) => (n.is_read ? "font-normal" : "font-semibold");
+
   const content = (n: NotificationItem) => (
     <>
-      <div>{n.title}</div>
-      <div className="text-sm font-normal text-slate-600">{n.body}</div>
-      <div className="text-xs font-normal text-slate-500">{relativeTime(n.created_at)}</div>
+      <div className="break-words">{n.title}</div>
+      <div className="break-words text-sm font-normal text-muted">{n.body}</div>
+      <div className="text-xs font-normal text-muted">{relativeTime(n.created_at)}</div>
     </>
   );
 
   return (
-    <ul className="divide-y divide-slate-200 rounded-md border border-slate-200 bg-white">
+    <ul className="flex flex-col divide-y divide-line rounded-xl border border-line bg-surface">
       {items.map((n) => (
-        <li key={n.id} className="flex items-start gap-2 px-4 py-3">
-          <span aria-hidden className={`mt-2 h-2 w-2 shrink-0 rounded-full ${n.is_read ? "bg-transparent" : "bg-primary"}`} />
+        <li key={n.id} className="flex items-start gap-3 p-4">
+          <span
+            aria-hidden="true"
+            data-testid={n.is_read ? undefined : "unread-dot"}
+            className={`mt-2 size-3 shrink-0 rounded-full ${n.is_read ? "bg-transparent" : "bg-rambu"}`}
+          />
           {n.report_id != null ? (
-            <button type="button" onClick={() => open(n)} className={`flex-1 text-left ${n.is_read ? "" : "font-bold"}`}>
+            <button type="button" onClick={() => open(n)} className={`min-w-0 flex-1 text-left ${weight(n)}`}>
               {content(n)}
             </button>
           ) : (
-            <div className={`flex-1 ${n.is_read ? "" : "font-bold"}`}>
+            <div className={`min-w-0 flex-1 ${weight(n)}`}>
               {content(n)}
               {!n.is_read && (
-                <button type="button" onClick={() => read(n)} className="text-xs font-normal text-primary underline">
-                  Tandai dibaca
-                </button>
+                <Button variant="quiet" onClick={() => read(n)}>Tandai dibaca</Button>
               )}
             </div>
           )}

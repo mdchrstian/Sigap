@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { FileText } from "lucide-react";
 import StatusBadge from "../../components/StatusBadge";
+import { Button, EmptyState } from "../../components/ui";
 import { fetchMine, fmtDate, type MineItem } from "./api";
 
 export default function MyReportsView() {
@@ -29,46 +31,52 @@ export default function MyReportsView() {
   }, [load]);
 
   return (
-    <div className="mx-auto max-w-3xl">
-      <h1 className="text-2xl font-bold">Laporan Saya</h1>
-      {error && <p role="alert" className="mt-2 text-red-600">{error}</p>}
+    <div className="mx-auto flex max-w-3xl flex-col gap-6 px-4 py-8 sm:px-6 md:py-12">
+      <h1 className="font-display text-2xl font-bold">Laporan Saya</h1>
+      {error && <p role="alert" className="font-semibold text-danger">{error}</p>}
       {!loading && !error && items.length === 0 && (
-        <div className="mt-6 text-center">
-          <p className="mb-3 text-slate-600">Anda belum membuat laporan.</p>
-          <Link to="/lapor" className="inline-block rounded bg-[#2D6CDF] px-4 py-2 text-white">
-            Buat Laporan
-          </Link>
-        </div>
+        <EmptyState
+          icon={FileText}
+          title="Anda belum membuat laporan."
+          action={<Button to="/lapor">Buat Laporan</Button>}
+        />
       )}
-      <ul className="mt-4 space-y-3">
+      <ul className="flex flex-col divide-y divide-line rounded-xl border border-line bg-surface">
         {items.map((m) => {
           const thumb = m.thumbnail_url ?? m.images?.[0]?.url;
           const cat = typeof m.category === "string" ? m.category : m.category?.name;
           return (
             <li key={m.id}>
-              <Link to={`/laporan/${m.id}`} className="flex gap-3 rounded border p-3 hover:bg-slate-50">
+              <Link to={`/laporan/${m.id}`} className="flex items-center gap-4 p-4 no-underline hover:bg-ground">
                 {thumb ? (
-                  <img src={thumb} alt="" className="h-20 w-20 shrink-0 rounded object-cover" />
+                  <img src={thumb} alt="" className="size-16 shrink-0 rounded-lg border border-line object-cover" />
                 ) : (
-                  <div className="h-20 w-20 shrink-0 rounded bg-slate-100" />
+                  <div className="size-16 shrink-0 rounded-lg border border-line bg-ground" aria-hidden="true" />
                 )}
-                <div className="min-w-0 space-y-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-semibold">{m.code}</span>
-                    <StatusBadge status={m.status} />
-                  </div>
-                  <p>{cat}</p>
-                  <p className="text-sm text-slate-500">{m.regency} &middot; {fmtDate(m.created_at)}</p>
+                <div className="min-w-0 flex-1">
+                  <p className="truncate">
+                    <span className="font-mono font-semibold tabular-nums">{m.code}</span>
+                    <span className="text-muted"> &middot; </span>
+                    <span className="font-semibold">{cat}</span>
+                  </p>
+                  <p className="truncate text-sm text-muted">{m.regency} &middot; {fmtDate(m.created_at)}</p>
+                </div>
+                <div className="shrink-0">
+                  <StatusBadge status={m.status} />
                 </div>
               </Link>
             </li>
           );
         })}
       </ul>
-      {hasNext && (
-        <button disabled={loading} onClick={() => load(page + 1)} className="mt-4 rounded border px-4 py-2">
-          Muat lebih banyak
-        </button>
+      {(page > 1 || hasNext) && (
+        <div className="flex gap-3">
+          {hasNext && (
+            <Button variant="secondary" loading={loading} onClick={() => load(page + 1)}>
+              Muat lebih banyak
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

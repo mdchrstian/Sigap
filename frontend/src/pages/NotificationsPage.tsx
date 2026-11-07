@@ -1,4 +1,5 @@
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { Button } from "../components/ui";
 import NotificationList from "../features/notifications/NotificationList";
 import { UNREAD_KEY } from "../features/notifications/NotificationBell";
 import { fetchNotifications, markAllRead } from "../features/notifications/notificationsApi";
@@ -22,18 +23,20 @@ export default function NotificationsPage() {
     refresh();
   };
   return (
-    <div className="mx-auto max-w-2xl space-y-4">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Notifikasi</h1>
+    <div className="mx-auto flex max-w-2xl flex-col gap-6 px-4 py-8 sm:px-6 md:py-12">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold">Notifikasi</h1>
         {unread > 0 && (
-          <button className="text-sm text-primary underline" onClick={all}>Tandai semua dibaca</button>
+          <Button variant="quiet" onClick={all}>Tandai semua dibaca</Button>
         )}
       </div>
       {q.isLoading ? <p>Memuat...</p> : <NotificationList items={items} onChanged={refresh} />}
       {q.hasNextPage && (
-        <button className="rounded-md border px-4 py-2 text-sm" disabled={q.isFetchingNextPage} onClick={() => q.fetchNextPage()}>
-          Muat lebih banyak
-        </button>
+        <div>
+          <Button variant="secondary" loading={q.isFetchingNextPage} onClick={() => q.fetchNextPage()}>
+            Muat lebih banyak
+          </Button>
+        </div>
       )}
     </div>
   );

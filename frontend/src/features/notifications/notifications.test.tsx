@@ -28,6 +28,12 @@ it("bell shows badge from API", async () => {
   expect(await screen.findByText("9+")).toBeTruthy();
 });
 
+it("bell aria-label has unread count", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue(new Response(JSON.stringify({ unread_count: 3 }))));
+  render(wrap(<NotificationBell />));
+  expect(await screen.findByLabelText("Notifikasi, 3 belum dibaca")).toBeTruthy();
+});
+
 it("bell hides badge at 0", async () => {
   const f = vi.fn().mockResolvedValue(new Response(JSON.stringify({ unread_count: 0 })));
   vi.stubGlobal("fetch", f);

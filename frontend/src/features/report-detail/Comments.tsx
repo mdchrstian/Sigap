@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
+import { Button, Dialog, Textarea } from "../../components/ui";
 import { useAuth } from "../auth/AuthContext";
 import { ApiError } from "../../lib/api";
 import { deleteComment, fetchComments, fmtDateTime, postComment, type CommentItem } from "./api";
@@ -14,6 +15,7 @@ export default function Comments({ reportId }: { reportId: string }) {
   const [image, setImage] = useState<File | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [zoom, setZoom] = useState<string | null>(null);
 
   const load = useCallback(
     async (p: number) => {
@@ -68,13 +70,12 @@ export default function Comments({ reportId }: { reportId: string }) {
   }
 
   return (
-    <section className="mt-8">
-      <h2 className="text-lg font-semibold">Informasi Tambahan</h2>
+    <section className="flex max-w-3xl flex-col gap-6">
+      <h2 className="text-lg font-bold">Informasi Tambahan</h2>
       {user ? (
-        <form onSubmit={submit} className="mt-3 space-y-2">
-          <textarea
+        <form onSubmit={submit} className="flex flex-col gap-3">
+          <Textarea
             aria-label="Komentar"
-            className="w-full rounded border p-2"
             rows={3}
             value={body}
             onChange={(e) => setBody(e.target.value)}
@@ -87,45 +88,49 @@ export default function Comments({ reportId }: { reportId: string }) {
             onChange={(e) => setImage(e.target.files?.[0] ?? null)}
             className="block w-full text-sm"
           />
-          <button disabled={busy} className="rounded bg-[#2D6CDF] px-4 py-2 text-white disabled:opacity-50">
-            Kirim
-          </button>
+          <div>
+            <Button type="submit" loading={busy}>Kirim komentar</Button>
+          </div>
         </form>
       ) : (
-        <Link to="/masuk" className="mt-3 inline-block text-[#2D6CDF] underline">
+        <Link to="/masuk" className="text-rambu underline">
           Masuk untuk menambahkan informasi
         </Link>
       )}
-      {error && <p role="alert" className="mt-2 text-sm text-red-600">{error}</p>}
-      <ul className="mt-4 space-y-3">
+      {error && <p role="alert" className="text-sm font-semibold text-danger">{error}</p>}
+      <ul className="flex flex-col divide-y divide-line">
         {items.map((c) => (
-          <li key={c.id} className="rounded border p-3">
-            <div className="flex flex-wrap items-center justify-between gap-2 text-sm text-slate-500">
-              <span className="font-semibold text-slate-700">{c.author_label}</span>
-              <span>{fmtDateTime(c.created_at)}</span>
+          <li key={c.id} className="flex flex-col gap-2 py-4 first:pt-0">
+            <div className="flex flex-wrap items-baseline gap-x-3">
+              <span className="font-semibold">{c.author_label}</span>
+              <span className="text-sm text-muted">{fmtDateTime(c.created_at)}</span>
             </div>
-            <p className="mt-1 whitespace-pre-wrap break-words">{c.body}</p>
+            <p className="whitespace-pre-wrap break-words">{c.body}</p>
             {c.image_url && (
-              <img src={c.image_url} alt="Foto komentar" className="mt-2 max-h-48 rounded" />
+              <button type="button" onClick={() => setZoom(c.image_url)} aria-label="Perbesar foto komentar"
+                className="self-start rounded-lg">
+                <img src={c.image_url} alt="Foto komentar" className="max-h-48 rounded-lg border border-line" />
+              </button>
             )}
             {c.is_mine && (
-              <button onClick={() => remove(c.id)} className="mt-2 text-sm text-red-600 underline">
-                Hapus
-              </button>
+              <div>
+                <Button variant="quiet" onClick={() => remove(c.id)}>Hapus</Button>
+              </div>
             )}
           </li>
         ))}
       </ul>
-      {!loading && items.length === 0 && <p className="mt-3 text-slate-500">Belum ada komentar.</p>}
+      {!loading && items.length === 0 && <p className="text-muted">Belum ada komentar.</p>}
       {hasNext && (
-        <button
-          disabled={loading}
-          onClick={() => load(page + 1)}
-          className="mt-3 rounded border px-4 py-2"
-        >
-          Muat lebih banyak
-        </button>
+        <div>
+          <Button variant="secondary" loading={loading} onClick={() => load(page + 1)}>
+            Muat lebih banyak
+          </Button>
+        </div>
       )}
+      <Dialog open={!!zoom} onClose={() => setZoom(null)} title="Foto komentar">
+        {zoom && <img src={zoom} alt="Foto komentar" className="max-h-96 w-full rounded-lg object-contain" />}
+      </Dialog>
     </section>
   );
 }

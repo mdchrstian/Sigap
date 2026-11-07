@@ -45,13 +45,41 @@ it("timeline, master group, logged-out comments", async () => {
     return base;
   }) as never);
   setup();
-  await waitFor(() => expect(screen.getAllByTestId("history-item")).toHaveLength(3));
-  const t = screen.getAllByTestId("history-item").map((e) => e.textContent);
-  expect(t[0]).toContain("S1");
-  expect(t[2]).toContain("S3");
+  await waitFor(() => expect(screen.getByText("S3")).toBeInTheDocument());
+  expect(screen.getByText("S1")).toBeInTheDocument();
   expect(screen.getByText(/tergabung dengan 2 laporan lain/)).toBeInTheDocument();
   expect(screen.queryByLabelText("Komentar")).toBeNull();
   expect(screen.getByText("Masuk untuk menambahkan informasi")).toBeInTheDocument();
+});
+
+const hist = (...st: string[]) => st.map((to_status) => ({ to_status, status_label: to_status, note: "",
+  actor_role_label: "Petugas", created_at: "2026-11-01T00:00:00Z" }));
+const stepsOf = () => screen.getAllByRole("listitem").filter((li) => li.className.includes("pl-12"));
+
+it("timeline in_progress: 4 passed/current, 1 upcoming", async () => {
+  vi.mocked(api).mockImplementation((async (p: string) => {
+    if (p.includes("/comments")) return { results: [], next: null };
+    return { ...base, status: "in_progress", history: hist("submitted", "under_review", "verified", "in_progress") };
+  }) as never);
+  setup();
+  await screen.findByText("Selesai");
+  const steps = stepsOf();
+  expect(steps).toHaveLength(5);
+  expect(steps[3]).toHaveAttribute("aria-current", "step");
+  expect(steps[4].textContent).toContain("Selesai");
+});
+
+it("timeline rejected: last step Ditolak, no upcoming", async () => {
+  vi.mocked(api).mockImplementation((async (p: string) => {
+    if (p.includes("/comments")) return { results: [], next: null };
+    return { ...base, status: "rejected", history: hist("submitted", "under_review", "rejected") };
+  }) as never);
+  setup();
+  await waitFor(() => expect(stepsOf()).toHaveLength(3));
+  const steps = stepsOf();
+  expect(steps[2].textContent).toContain("Ditolak");
+  expect(steps[2]).toHaveAttribute("aria-current", "step");
+  expect(screen.queryByText("Selesai")).toBeNull();
 });
 
 it("404 shows not found", async () => {
