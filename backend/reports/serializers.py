@@ -36,6 +36,7 @@ class ReportCreateSerializer(serializers.Serializer):
         required=False, allow_null=True)
     ai_suggested_description = serializers.CharField(required=False, allow_blank=True)
     ai_observations = serializers.CharField(required=False, allow_blank=True)
+    link_to_report_id = serializers.IntegerField(required=False, allow_null=True)
 
     def validate_ai_observations(self, value):
         if not value:
