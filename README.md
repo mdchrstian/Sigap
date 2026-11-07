@@ -67,6 +67,23 @@ Salin `backend/.env.example` ke `backend/.env`.
 | `NOMINATIM_USER_AGENT` | `Sigap/0.1 (...)` | User agent Nominatim |
 | `DEMO_PASSWORD` | `SigapDemo2026!` | Password akun demo untuk `seed_demo` |
 
+## Setup .env + migrasi (Supabase)
+
+```bash
+backend/scripts/setup_env.sh --database-url 'postgres://postgres.<ref>:<password>@aws-0-<region>.pooler.supabase.com:5432/postgres?sslmode=require' --seed
+```
+
+Skrip membuat `backend/.env` dari `.env.example` (dengan `SECRET_KEY` baru), mengisi `DATABASE_URL`, lalu menjalankan `migrate`. Gunakan Session pooler (port 5432) atau koneksi langsung, bukan Transaction pooler (6543).
+
+| Flag | Fungsi |
+|------|--------|
+| `--database-url URL` | Set/ganti `DATABASE_URL` di `.env` |
+| `--seed` | Jalankan `seed_demo` setelah migrasi |
+| `--skip-migrate` | Lewati migrasi |
+| `--force` | Buat ulang `.env` dari `.env.example` |
+
+`.env` yang sudah ada tidak diubah tanpa `--force`.
+
 ## Perintah
 
 ```bash
