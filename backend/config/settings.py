@@ -18,7 +18,16 @@ environ.Env.read_env(BASE_DIR / ".env")
 
 SECRET_KEY = env("SECRET_KEY", default="dev-insecure-key-change-me-please-0123456789")
 DEBUG = env("DEBUG")
-ALLOWED_HOSTS = env("ALLOWED_HOSTS")
+ALLOWED_HOSTS = list(env("ALLOWED_HOSTS"))
+_render_host = env("RENDER_EXTERNAL_HOSTNAME", default="")
+if _render_host and _render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(_render_host)
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+CSRF_TRUSTED_ORIGINS = env.list("CSRF_TRUSTED_ORIGINS", default=[])
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -44,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -100,7 +110,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = env("CORS_ALLOWED_ORIGINS")
 
 STORAGE_BACKEND = env("STORAGE_BACKEND")
-if STORAGE_BACKEND == "supabase":
+if STORAGE_BACKEND in ("supabase", "s3"):
     _default_storage = {
         "BACKEND": "storages.backends.s3.S3Storage",
         "OPTIONS": {
@@ -114,9 +124,19 @@ if STORAGE_BACKEND == "supabase":
     }
 else:
     _default_storage = {"BACKEND": "django.core.files.storage.FileSystemStorage"}
+if STORAGE_BACKEND in ("supabase", "s3"):
+    _public_url = env("SUPABASE_PUBLIC_URL", default="")
+    if _public_url:
+        AWS_S3_CUSTOM_DOMAIN = _public_url.removeprefix("https://").rstrip("/")
+        AWS_QUERYSTRING_AUTH = False
+        _default_storage["OPTIONS"]["custom_domain"] = AWS_S3_CUSTOM_DOMAIN
 STORAGES = {
     "default": _default_storage,
-    "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"
+        if DEBUG
+        else "whitenoise.storage.CompressedManifestStaticFilesStorage"
+    },
 }
 
 AI_PROVIDER = env("AI_PROVIDER")

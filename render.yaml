@@ -1,0 +1,48 @@
+services:
+  - type: web
+    name: sigap-backend
+    runtime: python
+    rootDir: backend
+    plan: free
+    healthCheckPath: /api/health
+    buildCommand: pip install uv && uv sync --frozen && uv run python manage.py collectstatic --noinput
+    startCommand: uv run python manage.py migrate --noinput && uv run gunicorn config.wsgi:application --bind 0.0.0.0:$PORT --workers 2 --timeout 60
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.8
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "false"
+      - key: AI_PROVIDER
+        value: nusarouter
+      - key: STORAGE_BACKEND
+        value: supabase
+      - key: DATABASE_URL
+        sync: false
+      - key: ALLOWED_HOSTS
+        sync: false
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false
+      - key: CSRF_TRUSTED_ORIGINS
+        sync: false
+      - key: SUPABASE_S3_ENDPOINT
+        sync: false
+      - key: SUPABASE_S3_REGION
+        sync: false
+      - key: SUPABASE_S3_ACCESS_KEY
+        sync: false
+      - key: SUPABASE_S3_SECRET_KEY
+        sync: false
+      - key: SUPABASE_BUCKET
+        sync: false
+      - key: SUPABASE_PUBLIC_URL
+        sync: false
+      - key: NUSAROUTER_API_KEY
+        sync: false
+      - key: NUSAROUTER_BASE_URL
+        sync: false
+      - key: NUSAROUTER_VISION_MODEL
+        sync: false
+      - key: NUSAROUTER_TEXT_MODEL
+        sync: false
