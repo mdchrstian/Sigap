@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer, useMap, useMapEvents } from "react-leaflet";
 import { divIcon } from "leaflet";
+import { LocateFixed, Search } from "lucide-react";
+import { Button, Input } from "./ui";
 import { ApiError } from "../lib/api";
 import { reverseGeocode, searchPlaces, type Place, type Reverse } from "../features/create-report/api";
 
@@ -9,7 +11,7 @@ const TILE = (import.meta.env.VITE_TILE_URL as string | undefined)
 const BALI: [number, number] = [-8.4095, 115.1889];
 const PIN = divIcon({
   className: "",
-  html: '<div style="width:20px;height:20px;border-radius:50%;background:var(--color-info);border:3px solid white;box-shadow:0 1px 4px #0006"></div>',
+  html: '<div style="width:20px;height:20px;border-radius:50%;background:var(--color-info);border:3px solid white;outline:2px solid var(--color-ink)"></div>',
   iconSize: [20, 20],
   iconAnchor: [10, 10],
 });
@@ -90,25 +92,25 @@ export default function LocationPicker({ value, onChange, onResolved }: Props) {
   }
 
   return (
-    <div className="space-y-3">
+    <div className="flex flex-col gap-3">
       <form onSubmit={search} className="flex gap-2">
-        <input
+        <Input
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder="Cari alamat atau tempat"
           aria-label="Cari lokasi"
-          className="min-w-0 flex-1 rounded border border-slate-300 px-3 py-2 text-sm"
+          className="min-w-0 flex-1"
         />
-        <button type="submit" className="rounded bg-slate-700 px-3 py-2 text-sm text-white">Cari</button>
+        <Button type="submit" variant="secondary" icon={Search}>Cari</Button>
       </form>
-      {searchMsg && <p className="text-sm text-slate-600">{searchMsg}</p>}
+      {searchMsg && <p className="text-sm text-muted">{searchMsg}</p>}
       {results && results.length > 0 && (
-        <ul className="divide-y rounded border border-slate-200 bg-white text-sm">
+        <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
           {results.map((p, i) => (
             <li key={i}>
               <button
                 type="button"
-                className="w-full px-3 py-2 text-left hover:bg-slate-50"
+                className="min-h-12 w-full px-3 py-2 text-left hover:bg-ground"
                 onClick={() => { pick({ lat: p.latitude, lng: p.longitude }, true); setResults(null); }}
               >
                 {p.label}
@@ -117,11 +119,11 @@ export default function LocationPicker({ value, onChange, onResolved }: Props) {
           ))}
         </ul>
       )}
-      <button type="button" onClick={locate} className="rounded border border-slate-300 px-3 py-2 text-sm">
+      <Button variant="secondary" icon={LocateFixed} onClick={locate} className="w-full sm:w-auto sm:self-start">
         Gunakan lokasi saya
-      </button>
-      {geoMsg && <p className="text-sm text-amber-700">{geoMsg}</p>}
-      <div className="h-72 overflow-hidden rounded border border-slate-300 sm:h-96">
+      </Button>
+      {geoMsg && <p role="alert" className="text-sm font-semibold text-danger">{geoMsg}</p>}
+      <div className="h-80 overflow-hidden rounded-xl border border-line">
         <MapContainer
           center={value ? [value.lat, value.lng] : BALI}
           zoom={value ? 15 : 10}
@@ -145,11 +147,11 @@ export default function LocationPicker({ value, onChange, onResolved }: Props) {
           )}
         </MapContainer>
       </div>
-      {value && info?.in_bali && info.address && <p className="text-sm">Alamat: {info.address}</p>}
+      {value && info?.in_bali && info.address && <p>Alamat: {info.address}</p>}
       {value && info && !info.in_bali && (
-        <p role="alert" className="text-sm text-red-600">Lokasi harus berada di Provinsi Bali.</p>
+        <p role="alert" className="font-semibold text-danger">Lokasi harus berada di Provinsi Bali.</p>
       )}
-      {revErr && <p className="text-sm text-amber-700">Alamat tidak dapat dimuat. Anda tetap dapat melanjutkan.</p>}
+      {revErr && <p className="rounded-lg bg-marka-soft p-3 text-ink">Alamat tidak dapat dimuat. Anda tetap dapat melanjutkan.</p>}
     </div>
   );
 }

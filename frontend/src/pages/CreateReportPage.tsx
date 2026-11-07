@@ -1,26 +1,26 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ApiError } from "../lib/api";
+import { SignPlate } from "../components/ui";
 import {
   EMPTY_DRAFT, fetchCategories, submitReport, type Category, type Draft,
 } from "../features/create-report/api";
-import { FIELD_STEP, STEPS, type StepProps } from "../features/create-report/StepNav";
+import { FIELD_STEP, Stepper, stepIndex, type StepProps } from "../features/create-report/StepNav";
 import PhotoStep from "../features/create-report/PhotoStep";
 import LocationStep from "../features/create-report/LocationStep";
 import ReviewStep from "../features/create-report/ReviewStep";
 import DuplicateStep, { type DupCache } from "../features/create-report/DuplicateStep";
-import SubmitStep from "../features/create-report/SubmitStep";
+import SubmitStep, { SuccessScreen, type Created } from "../features/create-report/SubmitStep";
 
 const LEAVE_MSG = "Laporan belum dikirim. Keluar dari halaman ini?";
 
 export default function CreateReportPage() {
-  const nav = useNavigate();
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<Draft>(EMPTY_DRAFT);
   const [cats, setCats] = useState<Category[]>([]);
   const [dup, setDup] = useState<DupCache | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [busy, setBusy] = useState(false);
+  const [created, setCreated] = useState<Created | null>(null);
   const done = useRef(false);
   const dirty = draft.files.length > 0 || draft.loc !== null || draft.description !== "";
 
@@ -69,7 +69,7 @@ export default function CreateReportPage() {
     try {
       const r = await submitReport(draft, cats);
       done.current = true;
-      nav(`/laporan/${r.id}`);
+      setCreated(r);
     } catch (e) {
       if (e instanceof ApiError && e.status === 400 && e.data && typeof e.data === "object") {
         const errs: Record<string, string> = {};
@@ -89,25 +89,34 @@ export default function CreateReportPage() {
 
   const props: StepProps = { draft, patch, onNext: next, onBack: back, errors };
 
+  function again() {
+    done.current = false;
+    setCreated(null);
+    setDraft(EMPTY_DRAFT);
+    setDup(null);
+    setErrors({});
+    setStep(0);
+  }
+
+  if (created) {
+    return (
+      <div className="mx-auto max-w-2xl px-4 py-8 md:py-12">
+        <SuccessScreen created={created} onAgain={again} />
+      </div>
+    );
+  }
+
   return (
-    <div className="mx-auto max-w-2xl p-4">
-      <h1 className="mb-3 text-2xl font-bold">Buat Laporan</h1>
-      <ol className="mb-5 flex flex-wrap gap-x-3 gap-y-1 text-xs" aria-label="Langkah">
-        {STEPS.map((s, i) => (
-          <li
-            key={s}
-            aria-current={i === step ? "step" : undefined}
-            className={i === step ? "font-bold text-[#2D6CDF]" : i < step ? "text-slate-700" : "text-slate-400"}
-          >
-            {i + 1}. {s}
-          </li>
-        ))}
-      </ol>
-      {step === 0 && <PhotoStep {...props} />}
-      {step === 1 && <LocationStep {...props} />}
-      {step === 2 && <ReviewStep {...props} cats={cats} />}
-      {step === 3 && <DuplicateStep {...props} cache={dup} setCache={setDup} />}
-      {step === 4 && <SubmitStep {...props} onNext={submit} cats={cats} busy={busy} />}
+    <div className="mx-auto flex max-w-2xl flex-col gap-8 px-4 py-8 md:py-12">
+      <SignPlate tone="rambu" level={1}>Buat Laporan</SignPlate>
+      <Stepper current={stepIndex(step)} />
+      <div>
+        {step === 0 && <PhotoStep {...props} />}
+        {step === 1 && <LocationStep {...props} />}
+        {step === 2 && <ReviewStep {...props} cats={cats} />}
+        {step === 3 && <DuplicateStep {...props} cache={dup} setCache={setDup} />}
+        {step === 4 && <SubmitStep {...props} onNext={submit} cats={cats} busy={busy} />}
+      </div>
     </div>
   );
 }

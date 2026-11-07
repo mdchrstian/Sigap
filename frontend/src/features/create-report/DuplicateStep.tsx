@@ -10,6 +10,8 @@ export function dupKey(d: Draft): string {
 
 export interface DupCache { key: string; result: DupResult | null }
 
+const item = "flex cursor-pointer items-center gap-3 rounded-lg border border-line bg-surface p-4";
+
 export default function DuplicateStep(
   { draft, patch, onNext, onBack, cache, setCache }:
   StepProps & { cache: DupCache | null; setCache: (c: DupCache) => void },
@@ -41,44 +43,54 @@ export default function DuplicateStep(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [res]);
 
-  if (res === undefined) return <p role="status">Memeriksa laporan serupa…</p>;
+  if (res === undefined) return <p role="status" className="text-muted">Memeriksa laporan serupa…</p>;
   if (skip || !res) return null;
 
   const high = res.decision === "high";
   const best = res.candidates[0];
   return (
     <section>
-      <h2 className="mb-2 text-lg font-semibold">Laporan Serupa</h2>
+      <h2 className="mb-2 font-display text-lg font-bold">Laporan Serupa</h2>
       {high && (
-        <p className="mb-3 rounded bg-amber-50 p-3 text-sm">
+        <p className="mb-4 rounded-lg bg-marka-soft p-4 text-ink">
           Kemungkinan besar sama dengan <strong>{best.code}</strong>. Laporan Anda akan ditautkan ke laporan tersebut.
         </p>
       )}
-      <ul className="space-y-2">
+      <ul className="flex flex-col gap-3">
         {(high ? [best] : res.candidates).map((c) => (
           <li key={c.report_id}>
-            <label className="flex cursor-pointer items-center gap-3 rounded border border-slate-200 p-2">
+            <label className={item}>
               <input
                 type="radio"
                 name="dup"
+                className="h-6 w-6 shrink-0"
                 checked={draft.linkTo === c.report_id}
                 onChange={() => patch({ linkTo: c.report_id })}
               />
               {c.thumbnail_url && (
-                <img src={c.thumbnail_url} alt="" className="h-14 w-14 rounded object-cover" />
+                <img src={c.thumbnail_url} alt="" className="h-16 w-16 rounded-lg object-cover" />
               )}
-              <span className="min-w-0 flex-1 text-sm">
-                <strong>{c.code}</strong> · {c.category_name}
-                <br />
-                {c.distance_m} m <StatusBadge status={c.status as ReportStatus} />
+              <span className="flex min-w-0 flex-1 flex-col items-start gap-1">
+                <span>
+                  <strong className="font-mono font-semibold tabular-nums">{c.code}</strong> · {c.category_name}
+                </span>
+                <span className="text-sm text-muted">{c.distance_m} m</span>
+                <StatusBadge status={c.status as ReportStatus} />
+                <span className="text-sm font-semibold text-rambu">Gabungkan ke laporan ini</span>
               </span>
             </label>
           </li>
         ))}
         <li>
-          <label className="flex cursor-pointer items-center gap-3 rounded border border-slate-200 p-2 text-sm">
-            <input type="radio" name="dup" checked={draft.linkTo === null} onChange={() => patch({ linkTo: null })} />
-            {high ? "Bukan masalah yang sama" : "Tidak ada yang sama"}
+          <label className={item}>
+            <input
+              type="radio"
+              name="dup"
+              className="h-6 w-6 shrink-0"
+              checked={draft.linkTo === null}
+              onChange={() => patch({ linkTo: null })}
+            />
+            Tetap kirim laporan baru
           </label>
         </li>
       </ul>

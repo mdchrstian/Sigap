@@ -1,9 +1,9 @@
 import { useState, type FormEvent } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
+import { Button, Field, Input, Panel } from "../components/ui";
 import { useAuth } from "../features/auth/AuthContext";
 import { parseError, type FormErrors } from "../features/auth/errors";
-
-const input = "mt-1 w-full rounded-md border border-slate-300 px-3 py-2";
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -12,6 +12,7 @@ export default function LoginPage() {
   const next = params.get("next");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [show, setShow] = useState(false);
   const [pending, setPending] = useState(false);
   const [err, setErr] = useState<FormErrors>({ fields: {}, general: "" });
 
@@ -29,27 +30,41 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="mx-auto max-w-sm">
-      <h1 className="mb-4 text-2xl font-bold">Masuk</h1>
-      <form onSubmit={submit} className="space-y-4">
-        {err.general && <p role="alert" className="text-sm text-red-600">{err.general}</p>}
-        <div>
-          <label htmlFor="email">Email</label>
-          <input id="email" type="email" required className={input} value={email} onChange={(e) => setEmail(e.target.value)} />
-          {err.fields.email && <p className="text-sm text-red-600">{err.fields.email}</p>}
-        </div>
-        <div>
-          <label htmlFor="password">Kata sandi</label>
-          <input id="password" type="password" required className={input} value={password} onChange={(e) => setPassword(e.target.value)} />
-          {err.fields.password && <p className="text-sm text-red-600">{err.fields.password}</p>}
-        </div>
-        <button disabled={pending} className="w-full rounded-md bg-primary px-4 py-2 font-semibold text-white disabled:opacity-50">
-          Masuk
-        </button>
-      </form>
-      <p className="mt-4 text-sm">
-        Belum punya akun? <Link to="/daftar" className="text-primary underline">Daftar</Link>
-      </p>
+    <div className="mx-auto max-w-md px-4 py-8 md:py-12">
+      <Panel>
+        <h1 className="mb-6 font-display text-xl font-extrabold">Masuk</h1>
+        <form onSubmit={submit} className="flex flex-col gap-6">
+          {err.general && (
+            <p role="alert" className="rounded-lg bg-danger-soft p-3 font-semibold text-danger">{err.general}</p>
+          )}
+          <Field label="Email" htmlFor="email" error={err.fields.email}>
+            <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+          </Field>
+          <Field label="Kata sandi" htmlFor="password" error={err.fields.password}>
+            <div className="flex gap-2">
+              <Input
+                id="password"
+                type={show ? "text" : "password"}
+                required
+                className="min-w-0 flex-1"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button
+                variant="quiet"
+                icon={show ? EyeOff : Eye}
+                aria-label={show ? "Sembunyikan kata sandi" : "Tampilkan kata sandi"}
+                onClick={() => setShow(!show)}
+                className="px-3"
+              />
+            </div>
+          </Field>
+          <Button type="submit" size="lg" loading={pending} className="w-full">Masuk</Button>
+        </form>
+        <p className="mt-6">
+          Belum punya akun? <Link to="/daftar" className="font-semibold text-rambu underline">Daftar</Link>
+        </p>
+      </Panel>
     </div>
   );
 }

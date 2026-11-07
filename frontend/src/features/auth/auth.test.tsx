@@ -82,5 +82,22 @@ describe("auth", () => {
     fireEvent.change(screen.getByLabelText("Kata sandi"), { target: { value: "pw" } });
     fireEvent.click(screen.getByRole("button", { name: "Masuk" }));
     expect(await screen.findByText("Email atau kata sandi salah")).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent("Email atau kata sandi salah");
+  });
+
+  it("password toggle switches input type and has aria-label", () => {
+    render(
+      <MemoryRouter>
+        <AuthProvider>
+          <LoginPage />
+        </AuthProvider>
+      </MemoryRouter>,
+    );
+    const pw = screen.getByLabelText("Kata sandi");
+    expect(pw).toHaveAttribute("type", "password");
+    fireEvent.click(screen.getByRole("button", { name: "Tampilkan kata sandi" }));
+    expect(pw).toHaveAttribute("type", "text");
+    fireEvent.click(screen.getByRole("button", { name: "Sembunyikan kata sandi" }));
+    expect(pw).toHaveAttribute("type", "password");
   });
 });
