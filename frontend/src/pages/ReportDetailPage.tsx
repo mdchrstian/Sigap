@@ -1,3 +1,7 @@
+import { useParams } from "react-router-dom";
+import ReportDetailView from "../features/report-detail/ReportDetailView";
+
 export default function ReportDetailPage() {
-  return <h1 className="text-2xl font-bold">Detail Laporan</h1>;
+  const { id = "" } = useParams();
+  return <ReportDetailView id={id} />;
 }
