@@ -24,4 +24,4 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 | 17 | 17-officer-dashboard-ui | running | solo | after:04,09,12 (officer API, summary) | yes | 1794033390 |
 | 18 | 18-notifications-ui | running | solo | after:04,10 (TopNav, notifications API) | yes | 1794033480 |
 | 19 | 19-analytics-ui | draft | solo | after:13,17 (insights API, officer pages) | yes | - |
-| 20 | 20-demo-seed-readme | running | solo | after:08,09,11 (services to seed with) | no | 1794033516 |
+| 20 | 20-demo-seed-readme | running | solo | after:08,09,11 (services to seed with) | no | 1794033531 |
