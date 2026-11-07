@@ -40,7 +40,7 @@ export function MarkaRoute({ steps, animate = false }: MarkaRouteProps) {
     <ol ref={ref} className="relative m-0 flex list-none flex-col gap-8 p-0">
       <svg className="absolute left-0 top-0 h-full w-8" aria-hidden="true" focusable="false">
         <defs>
-          <mask id={maskId}>
+          <mask id={maskId} maskUnits="userSpaceOnUse">
             <line
               x1="16"
               x2="16"
