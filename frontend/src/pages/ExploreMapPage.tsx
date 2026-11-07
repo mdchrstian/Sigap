@@ -101,7 +101,7 @@ export default function ExploreMapPage() {
 
   return (
     <div className="flex flex-col gap-4 p-4 md:flex-row">
-      <aside className="hidden w-80 shrink-0 overflow-y-auto rounded-xl border border-line bg-surface p-6 md:block md:h-[calc(100dvh-8rem)]">
+      <aside className="hidden w-80 shrink-0 overflow-y-auto rounded-xl border border-line bg-surface p-6 md:block md:h-[calc(100dvh-12rem)]">
         {renderPanel("side")}
       </aside>
       <div className="flex min-w-0 flex-1 flex-col gap-3">
@@ -113,7 +113,7 @@ export default function ExploreMapPage() {
             Perbesar peta untuk melihat semua laporan.
           </p>
         )}
-        <div className="relative h-[calc(100dvh-14rem)] min-h-96 overflow-hidden rounded-xl border border-line md:h-[calc(100dvh-8rem)]">
+        <div className="relative h-[calc(100dvh-14rem)] min-h-96 overflow-hidden rounded-xl border border-line md:h-[calc(100dvh-12rem)]">
           <MapContainer center={[-8.4095, 115.1889]} zoom={10} preferCanvas
             ref={mapRef} className="h-full w-full">
             <TileLayer url={TILE} attribution="&copy; OpenStreetMap contributors" />
