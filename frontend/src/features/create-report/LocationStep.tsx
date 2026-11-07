@@ -4,8 +4,8 @@ import { FieldErrors, StepNav, type StepProps } from "./StepNav";
 export default function LocationStep({ draft, patch, onNext, onBack, errors }: StepProps) {
   return (
     <section>
-      <h2 className="mb-2 text-lg font-semibold">Lokasi</h2>
-      <p className="mb-3 text-sm text-slate-600">Klik peta atau geser penanda ke lokasi masalah.</p>
+      <h2 className="mb-2 font-display text-lg font-bold">Lokasi</h2>
+      <p className="mb-4 text-muted">Klik peta atau geser penanda ke lokasi masalah.</p>
       <LocationPicker
         value={draft.loc}
         onChange={(p) => patch({ loc: p, inBali: null, address: "" })}

@@ -70,4 +70,4 @@ export function buildForm(d: Draft, cats: Category[]): FormData {
 }
 
 export const submitReport = (d: Draft, cats: Category[]) =>
-  api<{ id: number }>("/api/reports", { method: "POST", form: buildForm(d, cats) });
+  api<{ id: number; code?: string }>("/api/reports", { method: "POST", form: buildForm(d, cats) });

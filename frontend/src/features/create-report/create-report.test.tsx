@@ -7,6 +7,9 @@ import { EMPTY_DRAFT, type Category, type Draft } from "./api";
 import ReviewStep from "./ReviewStep";
 import DuplicateStep, { type DupCache } from "./DuplicateStep";
 import LocationStep from "./LocationStep";
+import PhotoStep from "./PhotoStep";
+import { Stepper } from "./StepNav";
+import { MemoryRouter } from "react-router-dom";
 
 vi.mock("react-leaflet", () => ({
   MapContainer: ({ children }: { children: unknown }) => <div>{children as never}</div>,
@@ -50,8 +53,8 @@ describe("ReviewStep", () => {
   it("shows manual notice on 503 and keeps form usable", async () => {
     vi.mocked(api.analyzePhoto).mockRejectedValue(new ApiError(503));
     view({ ...base, categoryId: "", description: "" });
-    expect(screen.getByText("AI sedang menganalisis foto…")).toBeInTheDocument();
-    expect(await screen.findByText(/Analisis AI tidak tersedia/)).toBeInTheDocument();
+    expect(screen.getByText("AI sedang membaca foto...")).toBeInTheDocument();
+    expect(await screen.findByText(/AI sedang tidak tersedia\. Silakan isi kategori dan deskripsi sendiri/)).toBeInTheDocument();
     expect(screen.getByLabelText("Deskripsi")).toHaveValue("");
     fireEvent.change(screen.getByLabelText("Kategori"), { target: { value: "1" } });
     fireEvent.change(screen.getByLabelText("Deskripsi"), { target: { value: "Lubang besar di jalan" } });
@@ -64,7 +67,7 @@ describe("ReviewStep", () => {
       description: "Jalan berlubang parah", observations: ["Lubang"],
     });
     view({ ...base, categoryId: "", description: "" });
-    expect(await screen.findByText(/Perlu ditinjau/)).toBeInTheDocument();
+    expect(await screen.findByText(/Draf AI/)).toBeInTheDocument();
     expect(screen.getByLabelText("Kategori")).toHaveValue("1");
     expect(screen.getByLabelText("Deskripsi")).toHaveValue("Jalan berlubang parah");
     expect(api.analyzePhoto).toHaveBeenCalledTimes(1);
@@ -102,7 +105,7 @@ describe("DuplicateStep", () => {
     expect((await screen.findAllByText("SGP-7")).length).toBeGreaterThan(0);
     expect(screen.getByText(/Kemungkinan besar sama dengan/)).toBeInTheDocument();
     await waitFor(() => expect(screen.getAllByRole("radio")[0]).toBeChecked());
-    expect(screen.getByLabelText(/Bukan masalah yang sama/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/Tetap kirim laporan baru/)).toBeInTheDocument();
   });
 });
 
@@ -118,5 +121,57 @@ describe("LocationStep", () => {
     );
     expect(await screen.findByText("Lokasi harus berada di Provinsi Bali.")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Lanjut" })).toBeDisabled();
+  });
+});
+
+describe("StepNav", () => {
+  it("marks the current step", () => {
+    render(<Stepper current={1} />);
+    const cur = screen.getByText("Lokasi").closest("li");
+    expect(cur).toHaveAttribute("aria-current", "step");
+    expect(screen.getByText("Foto").closest("li")).not.toHaveAttribute("aria-current");
+  });
+});
+
+describe("PhotoStep state.photo contract", () => {
+  const mount = (state: unknown) =>
+    render(
+      <MemoryRouter initialEntries={[{ pathname: "/lapor", state }]}>
+        <Harness init={EMPTY_DRAFT}>
+          {({ draft, patch }) => (
+            <PhotoStep draft={draft} patch={patch} onNext={() => {}} onBack={() => {}} errors={{}} />
+          )}
+        </Harness>
+      </MemoryRouter>,
+    );
+
+  beforeEach(() => {
+    URL.createObjectURL = vi.fn(() => "blob:x");
+    URL.revokeObjectURL = vi.fn();
+    vi.stubGlobal("createImageBitmap", async () => ({ width: 10, height: 10, close() {} }));
+    HTMLCanvasElement.prototype.getContext = vi.fn(() => ({ drawImage() {} })) as never;
+    HTMLCanvasElement.prototype.toBlob = function (cb: BlobCallback) { cb(new Blob(["x"], { type: "image/jpeg" })); };
+  });
+
+  it("preselects a File from router state without advancing", async () => {
+    const onNext = vi.fn();
+    render(
+      <MemoryRouter initialEntries={[{ pathname: "/lapor", state: { photo: file } }]}>
+        <Harness init={EMPTY_DRAFT}>
+          {({ draft, patch }) => (
+            <PhotoStep draft={draft} patch={patch} onNext={onNext} onBack={() => {}} errors={{}} />
+          )}
+        </Harness>
+      </MemoryRouter>,
+    );
+    expect(await screen.findByAltText("Foto 1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Ganti foto" })).toBeInTheDocument();
+    expect(onNext).not.toHaveBeenCalled();
+  });
+
+  it("ignores a non-File photo", async () => {
+    mount({ photo: "nope" });
+    expect(screen.getByText("Ambil atau pilih foto kerusakan")).toBeInTheDocument();
+    expect(screen.queryByAltText("Foto 1")).not.toBeInTheDocument();
   });
 });
