@@ -129,3 +129,132 @@ def test_throttle(user_client):
 
 def test_gif_400(user_client):
     assert post(user_client, fmt="GIF", size=(50, 50), name="a.gif").status_code == 400
+
+
+# ---- nusarouter ----
+REQ = SimpleNamespace(method="POST", url="https://x")
+import openai  # noqa: E402
+
+GOOD = {"is_infrastructure": True, "category_slug": "road",
+        "description": "Lubang", "observations": ["a"]}
+
+
+@pytest.fixture
+def nr(settings):
+    settings.AI_PROVIDER = "nusarouter"
+    settings.NUSAROUTER_API_KEY = "k"
+    settings.NUSAROUTER_BASE_URL = "https://nr.example/v1"
+    settings.NUSAROUTER_VISION_MODEL = "vis-m"
+    settings.NUSAROUTER_TEXT_MODEL = "txt-m"
+    settings.NUSAROUTER_TIMEOUT = 12
+    return settings
+
+
+def seq(*contents):
+    m = mock_openai("x")
+    m.chat.completions.create.side_effect = [
+        SimpleNamespace(choices=[SimpleNamespace(message=SimpleNamespace(content=c))],
+                        usage=None) for c in contents]
+    return m
+
+
+@pytest.mark.django_db
+def test_nr_client_args(nr):
+    with mock.patch("openai.OpenAI") as o:
+        client._nusarouter()
+    o.assert_called_once_with(api_key="k", base_url="https://nr.example/v1", timeout=12)
+
+
+@pytest.mark.django_db
+def test_nr_analyze_request_and_fences(nr):
+    m = seq("```json\n" + json.dumps(GOOD) + "\n```")
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        out = client.analyze_photo(b"img", [{"slug": "road", "name": "Jalan"}])
+    assert set(out) == set(GOOD)
+    kw = m.chat.completions.create.call_args.kwargs
+    assert kw["model"] == "vis-m"
+    assert kw["response_format"] == {"type": "json_object"}
+    parts = kw["messages"][1]["content"]
+    assert any(p["type"] == "image_url" for p in parts)
+    assert "JSON valid" in kw["messages"][0]["content"]
+
+
+@pytest.mark.django_db
+def test_nr_extra_keys_ok(nr):
+    m = seq(json.dumps({**GOOD, "extra": 1}))
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        assert client.analyze_photo(b"i", [])["description"] == "Lubang"
+
+
+@pytest.mark.django_db
+def test_nr_retry_then_ok(nr):
+    m = seq("not json", json.dumps(GOOD))
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        assert client.analyze_photo(b"i", [])["description"] == "Lubang"
+    assert m.chat.completions.create.call_count == 2
+
+
+@pytest.mark.django_db
+def test_nr_wrong_type_retries(nr):
+    bad = json.dumps({**GOOD, "observations": "x"})
+    m = seq(bad, json.dumps(GOOD))
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        client.analyze_photo(b"i", [])
+    assert m.chat.completions.create.call_count == 2
+
+
+def test_nr_invalid_twice_503(user_client, nr):
+    m = seq("nope", "nope")
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        r = post(user_client)
+    assert r.status_code == 503 and r.data["fallback"] == "manual"
+    assert m.chat.completions.create.call_count == 2
+
+
+SCHEMA = {"type": "object", "properties": {"summary": {"type": "string"}},
+          "required": ["summary"]}
+
+
+@pytest.mark.django_db
+def test_nr_generate_json_models(nr):
+    m = seq('{"summary": "s"}')
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        client.generate_json("sys", {"a": 1}, SCHEMA)
+    assert m.chat.completions.create.call_args.kwargs["model"] == "txt-m"
+    nr.NUSAROUTER_TEXT_MODEL = ""
+    m = seq('{"summary": "s"}')
+    with mock.patch.object(client, "_nusarouter", return_value=m):
+        client.generate_json("sys", {"a": 1}, SCHEMA)
+    assert m.chat.completions.create.call_args.kwargs["model"] == "vis-m"
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("attr", ["NUSAROUTER_API_KEY", "NUSAROUTER_BASE_URL",
+                                  "NUSAROUTER_VISION_MODEL"])
+def test_nr_missing_config(nr, attr):
+    setattr(nr, attr, "")
+    with mock.patch("openai.OpenAI") as o, pytest.raises(client.AIUnavailable):
+        client.analyze_photo(b"i", [])
+    o.assert_not_called()
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("exc", [
+    openai.APITimeoutError(request=REQ),
+    openai.APIError("boom", request=REQ, body=None),
+])
+def test_nr_api_errors(nr, exc):
+    m = mock_openai(exc=exc)
+    with mock.patch.object(client, "_nusarouter", return_value=m), \
+            pytest.raises(client.AIUnavailable):
+        client.analyze_photo(b"i", [])
+
+
+@pytest.mark.django_db
+def test_nr_embed_no_network(nr):
+    with mock.patch.object(client, "_nusarouter") as n, \
+            mock.patch.object(client, "_openai") as o:
+        v = client.embed_text("lubang jalan")
+    assert len(v) == 1536
+    n.assert_not_called()
+    o.assert_not_called()
