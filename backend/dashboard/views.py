@@ -5,10 +5,13 @@ from django.utils import timezone
 from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from accounts.permissions import IsOfficer
+from ai_services import client as ai_client
 
+from . import insights
 from .services import compute_summary, stale_qs
 
 
@@ -33,6 +36,40 @@ class SummaryView(APIView):
         if data is None:
             data = compute_summary(f, t, regency or None)
             cache.set(key, data, 60)
+        return Response(data)
+
+
+class InsightsView(APIView):
+    permission_classes = [IsOfficer]
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "ai_insights"
+
+    def post(self, request):
+        d = request.data
+        try:
+            f, t = _date(d.get("from")), _date(d.get("to"))
+        except (ValueError, TypeError):
+            return Response({"detail": "Format tanggal tidak valid (YYYY-MM-DD)."}, status=400)
+        if f and t and f > t:
+            return Response({"detail": "Tanggal awal setelah tanggal akhir."}, status=400)
+        regency = str(d.get("regency") or "").strip()
+        key = f"analytics:insights:{f}:{t}:{regency.lower()}"
+        data = cache.get(key)
+        if data is not None:
+            return Response(data)
+        stats, payload = insights.build_payload(f, t, regency or None)
+        unavailable = Response({"detail": "Ringkasan AI tidak tersedia saat ini."}, status=503)
+        try:
+            result = ai_client.generate_json(
+                insights.SYSTEM, payload, insights.SCHEMA, user=request.user)
+        except ai_client.AIUnavailable:
+            return unavailable
+        if not isinstance(result, dict):
+            return unavailable
+        summary, highlights, verified = insights.verify(result, payload)
+        data = {"summary": summary, "highlights": highlights, "verified": verified,
+                "generated_at": timezone.now(), "based_on": stats}
+        cache.set(key, data, 3600)
         return Response(data)
 
 
