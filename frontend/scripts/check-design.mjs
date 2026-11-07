@@ -48,7 +48,6 @@ for (const root of roots) {
         if (r.re.test(line)) {
           console.log(`${f}:${i + 1}: ${r.name}: ${line.trim()}`);
           failed++;
-          break;
         }
       }
     });
