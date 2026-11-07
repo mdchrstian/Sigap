@@ -39,7 +39,7 @@ Modular monolith: satu proyek Django dengan aplikasi terpisah per domain.
 3. Di Storage, buat bucket **public** (mis. `sigap`).
 4. Di Storage > S3 Connection, buat S3 access key dan secret key.
 5. Ambil connection string database dan isi `DATABASE_URL` dengan `?sslmode=require` di akhir, contoh: `postgres://postgres:PASSWORD@db.PROJECT.supabase.co:5432/postgres?sslmode=require`.
-6. Set `STORAGE_BACKEND=s3` dan isi variabel `SUPABASE_S3_*`.
+6. Set `STORAGE_BACKEND=supabase` dan isi variabel `SUPABASE_S3_*`.
 
 ## Variabel lingkungan
 
@@ -52,7 +52,7 @@ Salin `backend/.env.example` ke `backend/.env`.
 | `ALLOWED_HOSTS` | `localhost,127.0.0.1` | Host yang diizinkan |
 | `DATABASE_URL` | `postgres://sigap:sigap@localhost:54329/sigap` | Koneksi database (pakai `sslmode=require` untuk Supabase) |
 | `CORS_ALLOWED_ORIGINS` | `http://localhost:5173` | Origin frontend |
-| `STORAGE_BACKEND` | `local` | `local` atau `s3` |
+| `STORAGE_BACKEND` | `local` | `local` atau `supabase` (`s3` juga diterima) |
 | `SUPABASE_S3_ENDPOINT` | `https://PROJECT.supabase.co/storage/v1/s3` | Endpoint S3 Supabase |
 | `SUPABASE_S3_REGION` | `ap-southeast-1` | Region |
 | `SUPABASE_S3_ACCESS_KEY` | `dummy-access-key` | Access key S3 |
@@ -135,7 +135,7 @@ AI membantu. Warga mengonfirmasi. Petugas memverifikasi. Hasil AI hanya saran da
 
 ## Batasan dan keputusan terbuka
 
-- Deployment belum diputuskan (hosting backend dan frontend).
+- Panduan deploy: lihat [Deploy](docs/DEPLOY.md).
 - Ambang kemiripan duplikat perlu disetel dengan data berlabel; nilai saat ini bersifat perkiraan.
 - Belum ada pengaburan wajah atau plat nomor pada foto.
 - Seluruh data demo adalah data uji ("[DATA UJI]") dan bukan laporan nyata.
