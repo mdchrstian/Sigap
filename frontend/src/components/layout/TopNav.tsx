@@ -74,7 +74,7 @@ export default function TopNav() {
                     Profil
                   </Link>
                   <button
-                    className="flex h-12 w-full items-center px-3 text-left text-sm font-semibold hover:bg-ground"
+                    className="flex h-12 w-full items-center px-3 text-left text-sm font-semibold text-danger hover:bg-ground"
                     onClick={doLogout}
                   >
                     Keluar
@@ -117,7 +117,7 @@ export default function TopNav() {
               <NavLink to="/profil" className={mobileCls} onClick={() => setOpen(false)}>
                 <span className="truncate">Profil ({name})</span>
               </NavLink>
-              <button className={`${plain} text-left`} onClick={doLogout}>
+              <button className={`${plain} text-left text-danger`} onClick={doLogout}>
                 Keluar
               </button>
             </>
