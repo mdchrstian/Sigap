@@ -80,7 +80,7 @@ export default function OfficerDashboardPage() {
           const active = filters.status === t.key;
           return (
             <button key={t.key} role="tab" aria-selected={active} onClick={() => set({ status: t.key })}
-              className={`-mb-px flex h-12 items-center gap-2 border-b-4 px-2 text-sm font-semibold ${
+              className={`-mb-px flex h-12 items-center gap-2 border-b-[3px] px-2 text-sm font-semibold ${
                 active ? "border-marka text-ink" : "border-transparent text-muted hover:text-ink"
               }`}>
               {t.label}
@@ -121,7 +121,7 @@ export default function OfficerDashboardPage() {
       {items.length > 0 && (
         <>
           <table className="hidden w-full text-left text-sm md:table">
-            <thead className="sticky top-0 bg-ground">
+            <thead className="sticky top-[65px] z-10 bg-ground">
               <tr className="border-b border-line-strong">
                 <th className="px-3 py-3">Kode</th><th className="px-3 py-3">Kategori</th>
                 <th className="px-3 py-3">Kab/Kota</th><th className="px-3 py-3">Status</th>
