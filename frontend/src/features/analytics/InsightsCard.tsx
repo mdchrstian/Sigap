@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Sparkles } from "lucide-react";
 import { ApiError } from "../../lib/api";
+import { Button, Panel } from "../../components/ui";
 import { postInsights, UNAVAILABLE_TEXT, type Insights, type Range } from "./analyticsApi";
 
 export default function InsightsCard({ range }: { range: Range }) {
@@ -22,35 +24,41 @@ export default function InsightsCard({ range }: { range: Range }) {
   }
 
   return (
-    <section aria-labelledby="ai-title" className="rounded border bg-white p-4">
-      <h2 id="ai-title" className="text-lg font-semibold">Ringkasan AI</h2>
-      <button onClick={run} disabled={busy}
-        className="mt-2 rounded bg-[#176B5B] px-4 py-2 font-semibold text-white disabled:opacity-60">
-        {busy ? "Membuat..." : "Buat Ringkasan"}
-      </button>
-      {error && <p role="alert" className="mt-3 text-red-700">{error}</p>}
+    <Panel as="section" className="flex flex-col gap-4" >
+      <div className="flex flex-wrap items-center gap-3">
+        <h2 id="ai-title" className="text-lg font-bold">Ringkasan AI</h2>
+        <span className="rounded-lg bg-rambu-soft px-2 py-1 text-xs font-semibold text-rambu-dark">AI</span>
+      </div>
+      <div>
+        <Button icon={Sparkles} onClick={run} loading={busy}>
+          {busy ? "Membuat..." : "Buat Ringkasan"}
+        </Button>
+      </div>
+      {error && (
+        <p role="alert" className="rounded-lg bg-marka-soft p-4 font-semibold text-ink">{error}</p>
+      )}
       {data && (
         <div data-testid="insights-result" data-verified={String(data.verified)}
-          className={`mt-3 rounded border p-3 ${data.verified ? "border-slate-200" : "border-amber-400 bg-amber-50"}`}>
+          className={`flex flex-col gap-3 rounded-lg p-4 ${data.verified ? "border border-line" : "bg-marka-soft"}`}>
           {!data.verified && (
-            <p role="status" className="mb-2 text-sm font-semibold text-amber-800">
+            <p role="status" className="text-sm font-semibold text-ink">
               Ringkasan ini belum terverifikasi terhadap data. Periksa angka dengan teliti.
             </p>
           )}
           <p>{data.summary}</p>
           {data.highlights.length > 0 && (
-            <ul className="mt-2 list-disc pl-5">
+            <ul className="m-0 list-disc pl-6">
               {data.highlights.map((h, i) => <li key={i}>{h}</li>)}
             </ul>
           )}
-          <p className="mt-2 text-xs text-slate-600">
+          <p className="text-sm text-muted">
             Dibuat: {new Date(data.generated_at).toLocaleString("id-ID")}
           </p>
-          <p className="text-xs text-slate-600">
+          <p className="text-sm text-muted">
             Dibuat AI dari statistik di halaman ini. Periksa kembali sebelum digunakan.
           </p>
         </div>
       )}
-    </section>
+    </Panel>
   );
 }

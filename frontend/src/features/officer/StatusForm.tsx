@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { STATUS_MAP, type ReportStatus } from "../../lib/status";
 import { ApiError } from "../../lib/api";
+import { Button, Dialog, Field, Select, Textarea } from "../../components/ui";
 import { MIN_NOTE, NEXT_STATUSES, NOTE_REQUIRED, confirmText } from "./officerApi";
 
 export default function StatusForm({
@@ -18,7 +19,7 @@ export default function StatusForm({
   const [error, setError] = useState("");
 
   if (options.length === 0) {
-    return <p className="rounded bg-slate-100 p-3 font-semibold">Status final</p>;
+    return <p className="rounded-lg bg-ground p-4 font-semibold">Status final</p>;
   }
 
   const required = status !== "" && NOTE_REQUIRED.includes(status);
@@ -45,46 +46,30 @@ export default function StatusForm({
 
   return (
     <form
-      className="space-y-3"
+      className="flex flex-col gap-6"
       onSubmit={(e) => { e.preventDefault(); if (!disabled) setConfirming(true); }}
     >
-      <label className="block text-sm">
-        <span className="mb-1 block font-semibold">Status baru</span>
-        <select className="w-full rounded border p-2" value={status}
-          onChange={(e) => setStatus(e.target.value as ReportStatus)}>
+      <Field label="Status baru" htmlFor="status-baru">
+        <Select value={status} onChange={(e) => setStatus(e.target.value as ReportStatus)}>
           <option value="">Pilih status...</option>
           {options.map((s) => <option key={s} value={s}>{STATUS_MAP[s].label}</option>)}
-        </select>
-      </label>
-      <label className="block text-sm">
-        <span className="mb-1 block font-semibold">Catatan</span>
-        <textarea className="w-full rounded border p-2" rows={3} value={note}
-          onChange={(e) => setNote(e.target.value)} />
-      </label>
-      {noteShort && (
-        <p className="text-sm text-red-600">Catatan wajib minimal {MIN_NOTE} karakter.</p>
-      )}
-      {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
-      <button type="submit" disabled={disabled}
-        className="rounded bg-[#2D6CDF] px-4 py-2 font-semibold text-white disabled:opacity-50">
-        Simpan
-      </button>
-      {confirming && (
-        <div role="dialog" aria-modal="true"
-          className="fixed inset-0 z-[2000] flex items-center justify-center bg-black/40 p-4">
-          <div className="max-w-sm space-y-4 rounded bg-white p-5 shadow-lg">
-            <p>{confirmText(masterCount)}</p>
-            <div className="flex justify-end gap-2">
-              <button type="button" className="rounded border px-3 py-1"
-                onClick={() => setConfirming(false)}>Batal</button>
-              <button type="button" disabled={busy} onClick={confirm}
-                className="rounded bg-[#2D6CDF] px-3 py-1 font-semibold text-white">
-                Ya, ubah
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+        </Select>
+      </Field>
+      <Field label="Catatan" htmlFor="status-catatan"
+        error={noteShort ? `Catatan wajib minimal ${MIN_NOTE} karakter.` : undefined}>
+        <Textarea rows={3} value={note} onChange={(e) => setNote(e.target.value)} />
+      </Field>
+      {error && <p role="alert" className="text-sm font-semibold text-danger">{error}</p>}
+      <Button type="submit" disabled={disabled}>Simpan</Button>
+      <Dialog open={confirming} onClose={() => setConfirming(false)} title="Konfirmasi perubahan status"
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setConfirming(false)}>Batal</Button>
+            <Button loading={busy} onClick={confirm}>Ya, ubah</Button>
+          </>
+        }>
+        <p>{confirmText(masterCount)}</p>
+      </Dialog>
     </form>
   );
 }
