@@ -59,3 +59,12 @@ it("404 shows not found", async () => {
   setup();
   expect(await screen.findByText("Laporan tidak ditemukan")).toBeInTheDocument();
 });
+
+it("renders ai.suggested_category given as an object without crashing", async () => {
+  vi.mocked(api).mockImplementation((async (p: string) => {
+    if (p.includes("/comments")) return { results: [], next: null };
+    return { ...base, ai: { used: true, suggested_category: { id: 2, slug: "y", name: "Drainase" }, suggested_description: "x", observations: ["a"] } };
+  }) as never);
+  setup();
+  await waitFor(() => expect(screen.getByText("Kategori: Drainase")).toBeTruthy());
+});
