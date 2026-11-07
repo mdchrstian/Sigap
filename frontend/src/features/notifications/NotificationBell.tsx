@@ -14,10 +14,17 @@ export default function NotificationBell() {
   });
   const text = badgeText(data);
   return (
-    <Link to="/notifikasi" aria-label="Notifikasi" className="relative rounded-md p-2 hover:bg-primary-light">
-      <Bell size={20} />
+    <Link
+      to="/notifikasi"
+      aria-label={`Notifikasi, ${data} belum dibaca`}
+      className="relative flex size-12 items-center justify-center rounded-lg hover:bg-line"
+    >
+      <Bell size={20} aria-hidden="true" />
       {text && (
-        <span data-testid="unread-badge" className="absolute -right-0.5 -top-0.5 min-w-[18px] rounded-full bg-red-600 px-1 text-center text-xs font-semibold text-white">
+        <span
+          data-testid="unread-badge"
+          className="absolute right-0 top-0 min-w-5 rounded-full bg-danger px-1 text-center text-xs font-semibold text-white"
+        >
           {text}
         </span>
       )}
