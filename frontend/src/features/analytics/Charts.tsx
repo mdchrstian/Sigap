@@ -34,6 +34,7 @@ export function CategoryBar({ data }: { data: { name: string; count: number }[] 
             <BarChart data={data} margin={{ bottom: 24, left: 8 }}>
               <CartesianGrid stroke="var(--color-line)" vertical={false} />
               <XAxis dataKey="name" interval={0} tick={AXIS} stroke="var(--color-line-strong)"
+                angle={-30} textAnchor="end" height={96}
                 label={{ value: "Kategori", position: "insideBottom", offset: -16, style: AXIS }} />
               <YAxis allowDecimals={false} tick={AXIS} stroke="var(--color-line-strong)"
                 label={{ value: "Jumlah laporan", angle: -90, position: "insideLeft", style: AXIS }} />
