@@ -8,7 +8,7 @@ export default function Layout() {
   const bleed = pathname === "/";
   return (
     <ToastProvider>
-      <div className="flex min-h-screen flex-col overflow-x-hidden">
+      <div className="flex min-h-screen flex-col overflow-x-clip">
         <TopNav />
         <main className={bleed ? "flex-1" : "mx-auto w-full max-w-6xl flex-1 px-4 py-8 sm:px-6 md:py-12"}>
           <Outlet />

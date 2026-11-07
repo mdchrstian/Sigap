@@ -80,7 +80,7 @@ export default function OfficerDashboardPage() {
           const active = filters.status === t.key;
           return (
             <button key={t.key} role="tab" aria-selected={active} onClick={() => set({ status: t.key })}
-              className={`-mb-px flex h-12 items-center gap-2 border-b-4 px-2 text-sm font-semibold ${
+              className={`-mb-px flex h-12 items-center gap-2 border-b-[3px] px-2 text-sm font-semibold ${
                 active ? "border-marka text-ink" : "border-transparent text-muted hover:text-ink"
               }`}>
               {t.label}
