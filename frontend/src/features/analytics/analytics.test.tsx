@@ -5,7 +5,7 @@ import InsightsCard from "./InsightsCard";
 import type { Summary } from "./analyticsApi";
 
 const summary: Summary = {
-  total: 0, by_status: [], by_category: [{ slug: "a", name: "A", count: 0 }], by_regency: [],
+  total: 0, by_status: [], by_category: [], by_regency: [],
   by_week: [], stale_count: 0, period: { from: null, to: null }, limited_data: true,
 };
 
@@ -20,7 +20,7 @@ describe("analytics", () => {
   it("shows limited data warning and empty state", () => {
     render(<PublicStatsView data={summary} />);
     expect(screen.getByText("Data masih terbatas, statistik belum representatif.")).toBeInTheDocument();
-    expect(screen.getByText("Belum ada data untuk ditampilkan.")).toBeInTheDocument();
+    expect(screen.getByText("Belum ada laporan.")).toBeInTheDocument();
   });
 
   it("unverified insights use warning style", async () => {
