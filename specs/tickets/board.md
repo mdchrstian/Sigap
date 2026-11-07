@@ -12,14 +12,14 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 | 05 | 05-reports-core-api | done | solo | after:03,06 (permissions, is_in_bali) | no | - |
 | 06 | 06-locations-api | done | solo | after:01 (project skeleton) | no | - |
 | 07 | 07-ai-report-assistant-api | done | solo | after:05 (Category model) | no | - |
-| 08 | 08-duplicate-detection-api | ready | solo | after:05,07 (geo.nearby, embed_text) | no | - |
-| 09 | 09-status-tracking-api | draft | solo | after:05,08 (both edit reports/serializers.py) | no | - |
+| 08 | 08-duplicate-detection-api | done | solo | after:05,07 (geo.nearby, embed_text) | no | - |
+| 09 | 09-status-tracking-api | ready | solo | after:05,08 (both edit reports/serializers.py) | no | - |
 | 10 | 10-notifications-api | draft | solo | after:09 (status history signal) | no | - |
 | 11 | 11-comments-api | done | solo | after:05 (Report, images helper) | no | - |
 | 12 | 12-analytics-api | draft | solo | after:09 (IsOfficer, statuses) | no | - |
 | 13 | 13-ai-intelligence-api | draft | solo | after:07,12 (generate_json, compute_summary) | no | - |
-| 14 | 14-create-report-ui | draft | solo | after:04,06,07,08 (auth, geocode, AI, duplicates) | yes | - |
-| 15 | 15-explore-map | running | solo | after:04,05 (layout, reports) | yes | 1794032838 |
+| 14 | 14-create-report-ui | ready | solo | after:04,06,07,08 (auth, geocode, AI, duplicates) | yes | - |
+| 15 | 15-explore-map | done | solo | after:04,05 (layout, reports) | yes | - |
 | 16 | 16-report-detail-ui | draft | solo | after:04,09,11 (history, comments API) | yes | - |
 | 17 | 17-officer-dashboard-ui | draft | solo | after:04,09,12 (officer API, summary) | yes | - |
 | 18 | 18-notifications-ui | draft | solo | after:04,10 (TopNav, notifications API) | yes | - |
