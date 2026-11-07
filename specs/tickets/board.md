@@ -14,14 +14,14 @@ Status: draft | ready | running | done | blocked. Started is filled by the scrip
 | 07 | 07-ai-report-assistant-api | done | solo | after:05 (Category model) | no | - |
 | 08 | 08-duplicate-detection-api | done | solo | after:05,07 (geo.nearby, embed_text) | no | - |
 | 09 | 09-status-tracking-api | done | solo | after:05,08 (both edit reports/serializers.py) | no | - |
-| 10 | 10-notifications-api | ready | solo | after:09 (status history signal) | no | - |
+| 10 | 10-notifications-api | done | solo | after:09 (status history signal) | no | - |
 | 11 | 11-comments-api | done | solo | after:05 (Report, images helper) | no | - |
-| 12 | 12-analytics-api | ready | solo | after:09 (IsOfficer, statuses) | no | - |
-| 13 | 13-ai-intelligence-api | draft | solo | after:07,12 (generate_json, compute_summary) | no | - |
+| 12 | 12-analytics-api | done | solo | after:09 (IsOfficer, statuses) | no | - |
+| 13 | 13-ai-intelligence-api | running | solo | after:07,12 (generate_json, compute_summary) | no | 1794033390 |
 | 14 | 14-create-report-ui | running | solo | after:04,06,07,08 (auth, geocode, AI, duplicates) | yes | 1794033141 |
 | 15 | 15-explore-map | done | solo | after:04,05 (layout, reports) | yes | - |
-| 16 | 16-report-detail-ui | ready | solo | after:04,09,11 (history, comments API) | yes | - |
-| 17 | 17-officer-dashboard-ui | draft | solo | after:04,09,12 (officer API, summary) | yes | - |
-| 18 | 18-notifications-ui | draft | solo | after:04,10 (TopNav, notifications API) | yes | - |
+| 16 | 16-report-detail-ui | running | solo | after:04,09,11 (history, comments API) | yes | 1794033390 |
+| 17 | 17-officer-dashboard-ui | running | solo | after:04,09,12 (officer API, summary) | yes | 1794033390 |
+| 18 | 18-notifications-ui | ready | solo | after:04,10 (TopNav, notifications API) | yes | - |
 | 19 | 19-analytics-ui | draft | solo | after:13,17 (insights API, officer pages) | yes | - |
 | 20 | 20-demo-seed-readme | ready | solo | after:08,09,11 (services to seed with) | no | - |
