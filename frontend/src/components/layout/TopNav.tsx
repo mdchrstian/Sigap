@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { Camera, Menu, X } from "lucide-react";
 import NotificationBell from "../../features/notifications/NotificationBell";
 import { useAuth } from "../../features/auth/AuthContext";
+import { Button } from "../ui";
 
 const links = [
   { to: "/", label: "Beranda", end: true },
@@ -21,72 +22,113 @@ export default function TopNav() {
     ? [...links, { to: "/petugas", label: "Dashboard Petugas" }]
     : links;
   const cls = ({ isActive }: { isActive: boolean }) =>
-    `rounded-md px-3 py-2 text-sm font-medium ${isActive ? "bg-primary-light text-primary" : "hover:bg-primary-light"}`;
+    `flex items-center rounded-lg px-3 text-sm font-semibold transition-colors duration-150 h-12 md:h-16 md:rounded-none md:border-b-3 ${
+      isActive
+        ? "text-rambu md:border-marka"
+        : "text-ink hover:bg-ground md:border-transparent"
+    }`;
+  const mobileCls = (a: { isActive: boolean }) => `${cls(a)} md:hidden`;
   const doLogout = () => {
     setMenu(false);
     setOpen(false);
     logout();
     navigate("/masuk");
   };
-  const plain = "rounded-md px-3 py-2 text-sm font-medium hover:bg-primary-light";
+  const plain =
+    "flex h-12 items-center rounded-lg px-3 text-sm font-semibold text-ink transition-colors duration-150 hover:bg-ground";
+  const name = user ? user.full_name || user.email : "";
   return (
-    <header className="sticky top-0 z-[1000] border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link to="/" className="text-xl font-bold text-primary">Sigap</Link>
-        <nav className="hidden items-center gap-1 md:flex">
+    <header className="sticky top-0 z-[1000] border-b border-line bg-surface">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link
+          to="/"
+          className="shrink-0 rounded-lg bg-rambu px-3 py-1 font-display text-lg font-extrabold text-white outline-2 -outline-offset-4 outline-white focus-visible:outline-marka"
+        >
+          Sigap
+        </Link>
+        <nav className="hidden h-full items-stretch gap-1 md:flex" aria-label="Utama">
           {all.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.end} className={cls}>{l.label}</NavLink>
+            <NavLink key={l.to} to={l.to} end={l.end} className={cls}>
+              {l.label}
+            </NavLink>
           ))}
         </nav>
         <div className="flex items-center gap-2">
           {user && <NotificationBell />}
           {user ? (
             <div className="relative hidden md:block">
-              <button className={plain} aria-expanded={menu} onClick={() => setMenu((m) => !m)}>
-                {user.full_name || user.email}
+              <button
+                className={`${plain} max-w-48`}
+                aria-expanded={menu}
+                onClick={() => setMenu((m) => !m)}
+              >
+                <span className="truncate">{name}</span>
               </button>
               {menu && (
-                <div className="absolute right-0 mt-1 w-40 rounded-md border border-slate-200 bg-white py-1 shadow">
-                  <Link to="/profil" className="block px-3 py-2 text-sm hover:bg-primary-light" onClick={() => setMenu(false)}>Profil</Link>
-                  <button className="block w-full px-3 py-2 text-left text-sm hover:bg-primary-light" onClick={doLogout}>Keluar</button>
+                <div className="absolute right-0 mt-1 w-40 rounded-lg border border-line bg-surface py-1 shadow-overlay">
+                  <Link
+                    to="/profil"
+                    className="flex h-12 items-center px-3 text-sm font-semibold hover:bg-ground"
+                    onClick={() => setMenu(false)}
+                  >
+                    Profil
+                  </Link>
+                  <button
+                    className="flex h-12 w-full items-center px-3 text-left text-sm font-semibold hover:bg-ground"
+                    onClick={doLogout}
+                  >
+                    Keluar
+                  </button>
                 </div>
               )}
             </div>
           ) : (
             <div className="hidden items-center gap-1 md:flex">
-              <Link to="/masuk" className={plain}>Masuk</Link>
-              <Link to="/daftar" className={plain}>Daftar</Link>
+              <Link to="/masuk" className={plain}>
+                Masuk
+              </Link>
+              <Link to="/daftar" className={plain}>
+                Daftar
+              </Link>
             </div>
           )}
-          <Link to="/lapor" className="rounded-md bg-primary px-4 py-2 text-sm font-semibold text-white hover:opacity-90">
+          <Button to="/lapor" icon={Camera}>
             Buat Laporan
-          </Link>
+          </Button>
           <button
-            className="rounded-md p-2 md:hidden"
+            className="flex size-12 items-center justify-center rounded-lg hover:bg-ground md:hidden"
             aria-label="Menu"
             aria-expanded={open}
             onClick={() => setOpen((o) => !o)}
           >
-            {open ? <X size={22} /> : <Menu size={22} />}
+            {open ? <X size={24} aria-hidden="true" /> : <Menu size={24} aria-hidden="true" />}
           </button>
         </div>
       </div>
       {open && (
-        <nav className="flex flex-col gap-1 border-t border-slate-200 px-4 py-2 md:hidden">
+        <nav className="flex w-full flex-col gap-1 border-t border-line bg-surface px-4 py-2 md:hidden" aria-label="Menu seluler">
           {all.map((l) => (
-            <NavLink key={l.to} to={l.to} end={l.end} className={cls} onClick={() => setOpen(false)}>
+            <NavLink key={l.to} to={l.to} end={l.end} className={mobileCls} onClick={() => setOpen(false)}>
               {l.label}
             </NavLink>
           ))}
           {user ? (
             <>
-              <NavLink to="/profil" className={cls} onClick={() => setOpen(false)}>Profil ({user.full_name || user.email})</NavLink>
-              <button className={`${plain} text-left`} onClick={doLogout}>Keluar</button>
+              <NavLink to="/profil" className={mobileCls} onClick={() => setOpen(false)}>
+                <span className="truncate">Profil ({name})</span>
+              </NavLink>
+              <button className={`${plain} text-left`} onClick={doLogout}>
+                Keluar
+              </button>
             </>
           ) : (
             <>
-              <NavLink to="/masuk" className={cls} onClick={() => setOpen(false)}>Masuk</NavLink>
-              <NavLink to="/daftar" className={cls} onClick={() => setOpen(false)}>Daftar</NavLink>
+              <NavLink to="/masuk" className={mobileCls} onClick={() => setOpen(false)}>
+                Masuk
+              </NavLink>
+              <NavLink to="/daftar" className={mobileCls} onClick={() => setOpen(false)}>
+                Daftar
+              </NavLink>
             </>
           )}
         </nav>
