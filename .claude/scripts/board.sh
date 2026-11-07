@@ -16,15 +16,16 @@ rows() {
 }
 
 cmd_next() {
-  declare -A st
-  while IFS=$'\t' read -r id _ s _; do st[$id]=$s; done < <(rows)
+  local all
+  all=$(rows)
+  status_of() { printf '%s\n' "$all" | awk -F'\t' -v id="$1" '$1 == id { print $3; exit }'; }
   while IFS=$'\t' read -r id t s m r u _; do
     [[ $s == ready ]] || continue
     r=${r%% *}                       # "after:01 (reason)" -> "after:01"
     ok=1
     if [[ $r == after:* ]]; then
       IFS=',' read -ra deps <<< "${r#after:}"
-      for d in "${deps[@]}"; do [[ ${st[$d]:-} == done ]] || ok=0; done
+      for d in "${deps[@]}"; do [[ $(status_of "$d") == done ]] || ok=0; done
     fi
     (( ok )) && printf '%s\t%s\t%s\tui=%s\n' "$id" "$t" "$m" "$u"
   done < <(rows)
